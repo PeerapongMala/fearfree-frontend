@@ -8,14 +8,25 @@ export interface UserProfile {
   full_name: string;
   email: string;
   avatar_url?: string;
-
-  // ข้อมูลเฉพาะ (Optional)
   age?: number;
-  hospital_name?: string; // ใช้ได้ทั้งหมอ (สังกัด) และผู้ป่วย (รักษาที่ไหน)
-
-  // เฉพาะผู้ป่วย (Patient Fields)
+  hospital_name?: string;
   most_fear_animal?: string;
   coins?: number;
-  fear_percentage?: number; // เช่น 60
-  fear_level_text?: string; // เช่น "ระดับปานกลาง"
+  fear_percentage?: number;
+  fear_level_text?: string;
+}
+
+// ✅ [เพิ่มใหม่] ประวัติการแลกรางวัล
+export interface RedemptionHistoryItem {
+  id: number;
+  date: string; // เช่น '14 Aug 2025'
+  reward_name: string; // เช่น 'ส่วนลดค่ารักษา'
+  coins_used: number; // เช่น 30
+  status: "success" | "pending" | "failed"; // เช่น 'success'
+}
+
+// ✅ [เพิ่มใหม่] ประวัติการเล่นของฉัน
+export interface MyPlayHistoryItem {
+  animal_name: string; // เช่น 'งู'
+  progress_percent: number; // เช่น 100
 }
