@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@theme {
+  /* กำหนดสีหลักของโปรเจค (FearFree Theme) */
+  --color-primary: #2DD4BF;       /* Teal-400 */
+  --color-primary-dark: #0F766E;  /* Teal-700 */
+  --color-primary-light: #99F6E4; /* Teal-200 */
+  --color-accent: #F97316;        /* Orange */
+  
+  /* กำหนด Animation พื้นฐาน */
+  --animate-fade-in: fade-in 0.5s ease-in-out;
+  --animate-slide-up: slide-up 0.5s ease-out;
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slide-up {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+}
+
+/* Custom Class ที่เราใช้บ่อยๆ (Glassmorphism) */
+@utility card-glass {
+  @apply bg-white/80 backdrop-blur-md shadow-lg rounded-2xl border border-white/50;
+}
+
+/* Global Styles */
+body {
+  /* พื้นหลังไล่เฉดสีเขียวอ่อนตาม UXUI */
+  background: linear-gradient(to bottom, var(--color-teal-50), var(--color-teal-100));
+  min-height: 100vh;
+  color: var(--color-slate-800);
+  font-family: var(--font-sans);
+}

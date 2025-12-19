@@ -1,0 +1,89 @@
+// src/stores/game.store.ts
+import { create } from "zustand";
+import {
+  GameCategory,
+  Animal,
+  StageStatus,
+  GameRules,
+  StageDetail,
+  StageSubmissionResponse,
+} from "@/models/game.model";
+import { gameService } from "@/services/game.service";
+
+interface GameState {
+  // ... (State เดิม)
+  categories: GameCategory[];
+  currentAnimals: Animal[];
+  selectedAnimal: Animal | null;
+  stages: StageStatus[];
+  currentStageDetail: StageDetail | null;
+  gameRules: GameRules | null;
+  isLoading: boolean;
+  error: string | null;
+
+  // ... (Action เดิม)
+  fetchCategories: () => Promise<void>;
+  fetchAnimalsByCategory: (categoryId: number) => Promise<void>;
+  fetchAnimalAndStages: (animalId: number) => Promise<void>;
+  fetchGameRules: () => Promise<void>;
+  fetchStageDetail: (stageId: number) => Promise<void>;
+
+  // ✅ [แก้ไข] เปลี่ยน Return Type เป็น Promise<StageSubmissionResponse | null>
+  // เพื่อส่งข้อมูลเหรียญและด่านถัดไปคืนให้หน้าเว็บ
+  submitStage: (
+    stageId: number,
+    isSuccess: boolean,
+    note?: string
+  ) => Promise<StageSubmissionResponse | null>;
+
+  getStageIdByNo: (stageNo: number) => number | null;
+}
+
+export const useGameStore = create<GameState>((set, get) => ({
+  // ... (Initial State เดิม) ...
+  categories: [],
+  currentAnimals: [],
+  selectedAnimal: null,
+  stages: [],
+  currentStageDetail: null,
+  gameRules: null,
+  isLoading: false,
+  error: null,
+
+  // ... (Implementation เดิม) ...
+  fetchCategories: async () => {
+    /*...*/
+  },
+  fetchAnimalsByCategory: async (id) => {
+    /*...*/
+  },
+  fetchAnimalAndStages: async (id) => {
+    /*...*/
+  },
+  fetchGameRules: async () => {
+    /*...*/
+  },
+  fetchStageDetail: async (id) => {
+    /*...*/
+  },
+
+  // ✅ [แก้ไข implementation]
+  submitStage: async (stageId: number, isSuccess: boolean, note?: string) => {
+    try {
+      const result = await gameService.submitStageResult(
+        stageId,
+        isSuccess,
+        note
+      );
+      return result; // ส่ง data จริงกลับไป (มี earned_coins, next_stage)
+    } catch (err: unknown) {
+      console.error("Error submitting stage:", err);
+      return null; // ถ้า error ส่ง null
+    }
+  },
+
+  getStageIdByNo: (stageNo: number) => {
+    const stage = get().stages.find((s) => s.stage_no === stageNo);
+    return stage ? stage.id : null;
+  },
+}));
