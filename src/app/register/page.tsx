@@ -11,6 +11,7 @@ import {
   HeartHandshake,
   AlertCircle,
 } from "lucide-react";
+import { authService } from "@/services/auth.service";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -32,7 +33,7 @@ export default function RegisterPage() {
     return /\S+@\S+\.\S+/.test(email);
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
@@ -72,11 +73,20 @@ export default function RegisterPage() {
     }
 
     // --- จุดที่ต้องต่อ API ---
-    const { confirmPassword, ...payload } = formData;
+    const { confirmPassword: _confirmPassword, fullName, ...rest } = formData;
+    const payload = { ...rest, full_name: fullName };
     console.log("Register Data to API:", payload);
 
-    alert("สมัครสมาชิกสำเร็จ!");
-    router.push("/login");
+    try {
+      await authService.register(payload);
+      alert("สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ");
+      router.push("/login");
+    } catch (err: unknown) {
+      const error = err as Error & { response?: { data?: { error?: string } } };
+      setError(
+        error.response?.data?.error || "ไม่สามารถสมัครสมาชิกได้ โปรดลองอีกครั้ง"
+      );
+    }
   };
 
   const inputClass = (isError: boolean) =>

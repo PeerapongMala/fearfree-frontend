@@ -19,7 +19,7 @@ export const userService = {
   // ดึงโปรไฟล์
   getProfile: async () => {
     const response = await axios.get<{ data: UserProfile }>(
-      `${API_URL}/users/profile`,
+      `${API_URL}/users/me`,
       { headers: getAuthHeaders() }
     );
     return response.data;
@@ -27,8 +27,8 @@ export const userService = {
 
   // อัปเดตโปรไฟล์
   updateProfile: async (data: Partial<UserProfile>) => {
-    const response = await axios.put<{ data: UserProfile }>(
-      `${API_URL}/users/profile`,
+    const response = await axios.patch<{ data: UserProfile }>(
+      `${API_URL}/users/me`,
       data,
       { headers: getAuthHeaders() }
     );
@@ -38,7 +38,7 @@ export const userService = {
   // ✅ [เพิ่มใหม่] ประวัติการแลกรางวัล
   getRedemptionHistory: async () => {
     const response = await axios.get<{ data: RedemptionHistoryItem[] }>(
-      `${API_URL}/users/redemption-history`,
+      `${API_URL}/users/me/redemptions`,
       { headers: getAuthHeaders() }
     );
     return response.data;

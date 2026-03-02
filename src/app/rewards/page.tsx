@@ -105,10 +105,10 @@ export default function RewardsPage() {
                     {/* Price & Button */}
                     <div className="flex flex-col md:flex-row items-center gap-4 text-right">
                       <span className="text-sm md:text-base font-medium whitespace-nowrap">
-                        {reward.cost} คอยน์
+                        {reward.cost_coins} คอยน์
                       </span>
                       <button
-                        onClick={() => handleRedeem(reward.id, reward.cost)}
+                        onClick={() => handleRedeem(reward.id, reward.cost_coins)}
                         className="bg-[#D9886A] hover:bg-[#c5765a] text-white px-6 py-2 rounded-full font-bold shadow-md transition-transform hover:scale-105 active:scale-95 whitespace-nowrap"
                       >
                         แลก

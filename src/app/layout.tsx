@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Prompt } from "next/font/google"; // 1. import font
 import "./globals.css";
+import { Toaster } from "react-hot-toast";
 
 // 2. ตั้งค่า font
 const prompt = Prompt({
@@ -23,6 +24,19 @@ export default function RootLayout({
     <html lang="th">
       {/* 3. ใส่ className ของ font ลงไป */}
       <body className={`${prompt.variable} font-sans antialiased`}>
+        <Toaster 
+          position="top-center" 
+          toastOptions={{
+            duration: 3000,
+            style: {
+              background: '#333',
+              color: '#fff',
+              padding: '16px',
+              borderRadius: '10px',
+              fontSize: '16px',
+            }
+          }} 
+        />
         {children}
       </body>
     </html>

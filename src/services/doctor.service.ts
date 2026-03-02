@@ -6,6 +6,7 @@ import {
   CreatePatientResponse,
   PatientHistoryResponse,
   PatientTestHistoryResponse, // ✅ Import เพิ่ม
+  PatientRedemptionHistoryResponse,
 } from "@/models/doctor.model";
 import { useAuthStore } from "@/stores/auth.store";
 
@@ -70,6 +71,15 @@ export const doctorService = {
   getPatientById: async (patientId: number) => {
     const response = await axios.get<{ data: Patient }>(
       `${API_URL}/doctor/patients/${patientId}`,
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
+  },
+
+  // 7. ✅ [เพิ่มใหม่] ดึงประวัติการแลกของรางวัล
+  getPatientRedemptions: async (patientId: number) => {
+    const response = await axios.get<{ data: PatientRedemptionHistoryResponse }>(
+      `${API_URL}/doctor/patients/${patientId}/redemptions`,
       { headers: getAuthHeaders() }
     );
     return response.data;

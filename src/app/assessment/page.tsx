@@ -4,11 +4,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import AssessmentStepper from "@/components/AssessmentStepper";
+import { userService } from "@/services/user.service";
+import { useAuthStore } from "@/stores/auth.store";
 import { motion } from "framer-motion";
 import { ArrowLeft, AlertCircle } from "lucide-react";
 
 export default function AssessmentPage() {
   const router = useRouter();
+  const { user } = useAuthStore();
   const [error, setError] = useState("");
 
   const [formData, setFormData] = useState({
@@ -42,7 +45,7 @@ export default function AssessmentPage() {
     }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     setError("");
     const ageNum = parseInt(formData.age);
 
@@ -64,8 +67,17 @@ export default function AssessmentPage() {
       return;
     }
 
-    // ผ่านหมด ไปหน้าถัดไป
-    router.push("/assessment/questions");
+    // ผ่านหมด ไปหน้าถัดไป พร้อมอัปเดตข้อมูล
+    try {
+      await userService.updateProfile({
+        full_name: user?.full_name || "",
+        age: ageNum,
+        most_fear_animal: formData.fearedAnimal,
+      });
+      router.push("/assessment/questions");
+    } catch (err: unknown) {
+      setError("ไม่สามารถบันทึกข้อมูลได้ โปรดลองอีกครั้ง");
+    }
   };
 
   const inputClass = (isError: boolean) =>

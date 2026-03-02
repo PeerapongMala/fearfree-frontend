@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 // 1. Import Store
 import { useAuthStore } from "@/stores/auth.store";
-// import { authService } from "@/services/auth.service"; // (เอาไว้เปิดตอนต่อ Backend)
+import { authService } from "@/services/auth.service";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -39,48 +39,36 @@ export default function LoginPage() {
       setError("กรุณากรอกชื่อผู้ใช้งานและรหัสผ่าน");
       return;
     }
-    if (formData.username.length < 6) {
-      setError("ชื่อผู้ใช้งานต้องมีความยาวอย่างน้อย 6 ตัวอักษร");
-      return;
-    }
+
     if (formData.password.length < 8) {
       setError("รหัสผ่านต้องมีความยาวอย่างน้อย 8 ตัวอักษร");
       return;
     }
 
-    // --- ส่วนต่อ API (จำลองว่ายิงแล้วได้ข้อมูลมา) ---
+    // --- ส่วนต่อ API ---
     console.log("Login with:", formData);
 
-    /* // TODO: เมื่อ Backend เสร็จ ให้เปิดใช้ code นี้แทน
     try {
       const res = await authService.login(formData);
-      if (res.success) {
-         // บันทึก User จาก Backend ลง Store
-         login(res.data.user, res.data.token);
-         setSuccess("เข้าสู่ระบบสำเร็จ!");
-         setTimeout(() => router.push("/assessment"), 2000);
+      if (res.token) {
+        login(res.user, res.token);
+        setSuccess("เข้าสู่ระบบสำเร็จ! กำลังพาไปหน้าถัดไป...");
+        setTimeout(() => {
+          if (res.user.role === "admin") {
+            router.push("/admin/dashboard");
+          } else if (res.user.role === "doctor") {
+            router.push("/doctor/dashboard");
+          } else {
+            router.push("/assessment");
+          }
+        }, 1500);
       }
-    } catch (err) { ... }
-    */
-
-    // 3. [สำคัญ] ยัดข้อมูล User จำลองลง Store เพื่อให้ Navbar ยอมให้ผ่าน
-    // (ใช้ชั่วคราวระหว่างรอ Backend)
-    login(
-      {
-        id: 1,
-        username: formData.username,
-        full_name: "Doctor Mock",
-        role: "doctor",
-        balance: 100,
-      },
-      "mock-token-123"
-    );
-
-    // 4. แสดง Popup และย้ายหน้า
-    setSuccess("เข้าสู่ระบบสำเร็จ! กำลังพาไปหน้าถัดไป...");
-    setTimeout(() => {
-      router.push("/assessment");
-    }, 2000);
+    } catch (err: unknown) {
+      const error = err as Error & { response?: { data?: { error?: string } } };
+      setError(
+        error.response?.data?.error || "เข้าสู่ระบบไม่สำเร็จ โปรดลองอีกครั้ง"
+      );
+    }
   };
 
   const inputBorderClass = error

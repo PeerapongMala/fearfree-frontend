@@ -44,3 +44,17 @@ export interface PatientTestHistoryResponse {
   patient: Patient;
   test_history: TestHistoryItem[];
 }
+
+// ✅ [เพิ่มใหม่] สำหรับหน้าประวัติการแลกของรางวัล
+export interface RedemptionHistoryItem {
+  id: number;
+  date: string; // '14 Aug 2025'
+  reward_name: string;
+  coins_used: number;
+  status: string; // 'success'
+}
+
+export interface PatientRedemptionHistoryResponse {
+  patient: Patient;
+  redemptions: RedemptionHistoryItem[];
+}

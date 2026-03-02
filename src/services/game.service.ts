@@ -26,14 +26,15 @@ export const gameService = {
   // ... (func อื่นๆ เหมือนเดิม: getCategories, getAnimals, getRules, getStageDetail) ...
 
   getCategories: async (): Promise<ApiResponse<GameCategory[]>> => {
-    const response = await axios.get(`${API_URL}/game/categories`);
+    const response = await axios.get(`${API_URL}/stages/categories`, { headers: getAuthHeaders() });
     return response.data;
   },
   getAnimalsByCategory: async (
     categoryId: number
   ): Promise<ApiResponse<Animal[]>> => {
     const response = await axios.get(
-      `${API_URL}/game/categories/${categoryId}/animals`
+      `${API_URL}/stages/categories/${categoryId}/animals`,
+      { headers: getAuthHeaders() }
     );
     return response.data;
   },
@@ -45,21 +46,21 @@ export const gameService = {
     animalId: number
   ): Promise<ApiResponse<StageStatus[]>> => {
     const response = await axios.get(
-      `${API_URL}/game/animals/${animalId}/stages/progress`,
+      `${API_URL}/stages/animals/${animalId}/levels`,
       { headers: getAuthHeaders() }
     );
     return response.data;
   },
   getGameRules: async (): Promise<ApiResponse<GameRules>> => {
-    const response = await axios.get(`${API_URL}/game/v1/rules`, {
+    const response = await axios.get(`${API_URL}/game-configs`, {
       headers: getAuthHeaders(),
     });
     return response.data;
   },
   getStageDetail: async (
-    stageId: number
+    levelId: number
   ): Promise<ApiResponse<StageDetail>> => {
-    const response = await axios.get(`${API_URL}/stages/v1/${stageId}`, {
+    const response = await axios.get(`${API_URL}/stages/levels/${levelId}`, {
       headers: getAuthHeaders(),
     });
     return response.data;
@@ -67,14 +68,14 @@ export const gameService = {
 
   // ✅ [แก้ไข] Return เป็น StageSubmissionResponse
   submitStageResult: async (
-    stageId: number,
+    levelId: number,
     isSuccess: boolean,
     note?: string
   ): Promise<StageSubmissionResponse> => {
     // หมายเหตุ: Backend ควรส่งโครงสร้างกลับมาให้ตรงกับ StageSubmissionResponse
     const response = await axios.post<StageSubmissionResponse>(
-      `${API_URL}/stages/v1/${stageId}/result`,
-      { success: isSuccess, note: note },
+      `${API_URL}/stages/levels/${levelId}/results`,
+      { answer: isSuccess ? "pass" : "fail", symptom_note: note },
       { headers: getAuthHeaders() }
     );
     return response.data;

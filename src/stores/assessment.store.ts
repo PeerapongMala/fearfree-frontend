@@ -71,11 +71,11 @@ export const useAssessmentStore = create<AssessmentState>((set, get) => ({
         answers: payloadAnswers,
       });
 
-      // ✅ สมมติ Backend ส่งกลับมาเป็น { success: true, data: { total_score: 50, level: "ปานกลาง", ... } }
-      // เราก็เก็บ data ลง Store เลย
+      // ✅ สมมติ Backend ส่งกลับมาเป็น { message, fear_level, percent }
+      // เราก็เก็บ response ลง Store เลย (เพราะ service return response.data แล้ว)
       set({
         isLoading: false,
-        result: response.data, // บันทึกผลลัพธ์ที่คำนวณจาก Backend
+        result: response as unknown as AssessmentResult, // บันทึกผลลัพธ์
       });
 
       return true;

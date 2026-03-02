@@ -1,6 +1,6 @@
 // src/services/auth.service.ts
 import axios from "axios";
-import { User } from "@/models/user.model";
+import { UserProfile } from "@/models/user.model";
 
 // เรียก URL จาก Environment Variable
 const API_URL =
@@ -22,28 +22,29 @@ interface RegisterData {
 }
 
 export const authService = {
-  // 2. ใส่ Type แทน any
   login: async (data: LoginData) => {
-    // console.log("Service: Login API Call", data);
     const response = await axios.post<{
-      success: boolean;
-      data: { token: string; user: User };
+      message: string;
+      token: string;
+      user: UserProfile;
     }>(`${API_URL}/auth/login`, data);
     return response.data;
   },
 
   patientLogin: async (code: string) => {
-    // console.log("Service: Patient Login API Call", code);
     const response = await axios.post<{
-      success: boolean;
-      data: { token: string; user: User };
+      message: string;
+      token: string;
+      user: UserProfile;
     }>(`${API_URL}/auth/patient-login`, { code });
     return response.data;
   },
 
   register: async (data: RegisterData) => {
-    // console.log("Service: Register API Call", data);
-    const response = await axios.post(`${API_URL}/auth/register`, data);
+    const response = await axios.post<{
+      message: string;
+      user_id: number;
+    }>(`${API_URL}/auth/signup`, data);
     return response.data;
   },
 };

@@ -15,7 +15,7 @@ export const rewardService = {
   // ✅ GET: /rewards/v1 (ดึงรายการของรางวัล)
   getRewards: async () => {
     const response = await axios.get<{ data: Reward[] }>(
-      `${API_URL}/rewards/v1`,
+      `${API_URL}/rewards`,
       { headers: getAuthHeaders() }
     );
     return response.data;
@@ -24,7 +24,7 @@ export const rewardService = {
   // ✅ POST: /rewards/v1/{rewardId}/redeem (แลกรางวัล)
   redeemReward: async (rewardId: number) => {
     const response = await axios.post<RedeemResponse>(
-      `${API_URL}/rewards/v1/${rewardId}/redeem`,
+      `${API_URL}/rewards/${rewardId}/redeem`,
       {},
       { headers: getAuthHeaders() }
     );

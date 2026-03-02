@@ -12,6 +12,7 @@ import {
   ChevronLeft,
   ChevronRight,
   UserPlus,
+  Gift,
 } from "lucide-react";
 import { useAuthStore } from "@/stores/auth.store";
 import { useDoctorStore } from "@/stores/doctor.store";
@@ -199,7 +200,7 @@ export default function DoctorDashboard() {
                   <th className="p-4 font-normal text-center">
                     บันทึกการทดสอบ
                   </th>
-                  <th className="p-4 font-normal text-center">แก้ไข</th>
+                  <th className="p-4 font-normal text-center">แลกรางวัล</th>
                   <th className="p-4 font-normal text-center">ลบ</th>
                 </tr>
               </thead>
@@ -222,18 +223,27 @@ export default function DoctorDashboard() {
 
                     {/* Actions Icons */}
                     <td className="p-4 text-center">
-                      <button className="p-2 hover:bg-gray-200 rounded-full text-gray-600">
+                      <button
+                        onClick={() => router.push(`/doctor/play-history/${patient.id}`)}
+                        className="p-2 hover:bg-gray-200 rounded-full text-gray-600"
+                      >
                         <Eye size={20} />
                       </button>
                     </td>
                     <td className="p-4 text-center">
-                      <button className="p-2 hover:bg-gray-200 rounded-full text-gray-600">
+                      <button
+                        onClick={() => router.push(`/doctor/test-history/${patient.id}`)}
+                        className="p-2 hover:bg-gray-200 rounded-full text-gray-600"
+                      >
                         <FileText size={20} />
                       </button>
                     </td>
                     <td className="p-4 text-center">
-                      <button className="p-2 hover:bg-gray-200 rounded-full text-gray-600">
-                        <Edit size={20} />
+                      <button
+                        onClick={() => router.push(`/doctor/redemption-history/${patient.id}`)}
+                        className="p-2 hover:bg-gray-200 rounded-full text-gray-600"
+                      >
+                        <Gift size={20} />
                       </button>
                     </td>
                     <td className="p-4 text-center">
@@ -242,17 +252,6 @@ export default function DoctorDashboard() {
                         className="p-2 hover:bg-red-100 rounded-full text-red-500"
                       >
                         <Trash2 size={20} />
-                      </button>
-                    </td>
-                    <td className="p-4 text-center">
-                      <button
-                        // ✅ เพิ่ม onClick ให้ไปหน้า History
-                        onClick={() =>
-                          router.push(`/doctor/history/${patient.id}`)
-                        }
-                        className="p-2 hover:bg-gray-200 rounded-full text-gray-600"
-                      >
-                        <FileText size={20} />
                       </button>
                     </td>
                   </tr>

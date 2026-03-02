@@ -1,0 +1,159 @@
+// src/stores/admin.store.ts
+import { create } from "zustand";
+import { AdminReward, AdminRewardInput, AdminCategoryInput, AdminAnimalInput, AdminStageInput } from "@/models/admin.model";
+import { adminService } from "@/services/admin.service";
+import { gameService } from "@/services/game.service";
+import toast from "react-hot-toast";
+
+interface AdminState {
+  rewards: AdminReward[];
+  isLoading: boolean;
+
+  fetchRewards: () => Promise<void>;
+  createReward: (data: AdminRewardInput) => Promise<boolean>;
+  updateReward: (id: number, data: AdminRewardInput) => Promise<boolean>;
+  deleteReward: (id: number) => Promise<boolean>;
+
+  // Game Hierarchy State
+  categories: any[]; // Using any for nested structure to avoid TS issues
+  fetchGamesHierarchy: () => Promise<void>;
+
+  // Mutations
+  createCategory: (data: AdminCategoryInput) => Promise<boolean>;
+  deleteCategory: (id: number) => Promise<boolean>;
+  createAnimal: (data: AdminAnimalInput) => Promise<boolean>;
+  deleteAnimal: (id: number) => Promise<boolean>;
+  createStage: (data: AdminStageInput) => Promise<boolean>;
+  deleteStage: (id: number) => Promise<boolean>;
+}
+
+export const useAdminStore = create<AdminState>((set, get) => ({
+  rewards: [],
+  categories: [],
+  isLoading: false,
+
+  fetchRewards: async () => {
+    set({ isLoading: true });
+    try {
+      const res = await adminService.getRewards();
+      set({ rewards: res.data || [], isLoading: false });
+    } catch (err: any) {
+      console.error(err);
+      toast.error("ไม่สามารถดึงข้อมูลของรางวัลได้");
+      set({ isLoading: false });
+    }
+  },
+
+  createReward: async (data) => {
+    set({ isLoading: true });
+    try {
+      const res = await adminService.createReward(data);
+      if (res.success) {
+        set((state) => ({ rewards: [...state.rewards, res.data] }));
+        toast.success("เพิ่มของรางวัลสำเร็จ");
+        return true;
+      }
+      return false;
+    } catch (err: any) {
+      toast.error(err.response?.data?.error || "เพิ่มของรางวัลไม่สำเร็จ");
+      return false;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  updateReward: async (id, data) => {
+    set({ isLoading: true });
+    try {
+      const res = await adminService.updateReward(id, data);
+      if (res.success) {
+        set((state) => ({
+          rewards: state.rewards.map((r) => (r.id === id ? res.data : r)),
+        }));
+        toast.success("อัปเดตของรางวัลสำเร็จ");
+        return true;
+      }
+      return false;
+    } catch (err: any) {
+      toast.error(err.response?.data?.error || "อัปเดตไม่สำเร็จ");
+      return false;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  deleteReward: async (id) => {
+    set({ isLoading: true });
+    try {
+      const res = await adminService.deleteReward(id);
+      if (res.success) {
+        set((state) => ({
+          rewards: state.rewards.filter((r) => r.id !== id),
+        }));
+        toast.success("ลบของรางวัลสำเร็จ");
+        return true;
+      }
+      return false;
+    } catch (err: any) {
+      toast.error("ลบของรางวัลไม่สำเร็จ");
+      return false;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  // === GAMES HIERARCHY ===
+  fetchGamesHierarchy: async () => {
+    set({ isLoading: true });
+    try {
+      const res = await gameService.getCategories();
+      set({ categories: res.data || [], isLoading: false });
+    } catch (err: any) {
+      console.error(err);
+      toast.error("ดึงข้อมูลโครงสร้างเกมไม่สำเร็จ");
+      set({ isLoading: false });
+    }
+  },
+
+  createCategory: async (data) => {
+    try {
+      const res = await adminService.createCategory(data);
+      if (res.success) { get().fetchGamesHierarchy(); toast.success("สร้างหมวดหมู่สำเร็จ"); return true; }
+      return false;
+    } catch { toast.error("สร้างหมวดหมู่ไม่สำเร็จ"); return false; }
+  },
+  deleteCategory: async (id) => {
+    try {
+      await adminService.deleteCategory(id);
+      get().fetchGamesHierarchy(); toast.success("ลบสำเร็จ"); return true;
+    } catch { toast.error("ลบไม่สำเร็จ"); return false; }
+  },
+
+  createAnimal: async (data) => {
+    try {
+      const res = await adminService.createAnimal(data);
+      if (res.success) { get().fetchGamesHierarchy(); toast.success("สร้างสัตว์สำเร็จ"); return true; }
+      return false;
+    } catch { toast.error("สร้างสัตว์ไม่สำเร็จ"); return false; }
+  },
+  deleteAnimal: async (id) => {
+    try {
+      await adminService.deleteAnimal(id);
+      get().fetchGamesHierarchy(); toast.success("ลบสำเร็จ"); return true;
+    } catch { toast.error("ลบไม่สำเร็จ"); return false; }
+  },
+
+  createStage: async (data) => {
+    try {
+      const res = await adminService.createStage(data);
+      if (res.success) { get().fetchGamesHierarchy(); toast.success("สร้างด่านสำเร็จ"); return true; }
+      return false;
+    } catch { toast.error("สร้างด่านไม่สำเร็จ"); return false; }
+  },
+  deleteStage: async (id) => {
+    try {
+      await adminService.deleteStage(id);
+      get().fetchGamesHierarchy(); toast.success("ลบสำเร็จ"); return true;
+    } catch { toast.error("ลบไม่สำเร็จ"); return false; }
+  },
+}));

@@ -5,6 +5,7 @@ import {
   CreatePatientPayload,
   PlayHistoryItem,
   TestHistoryItem, // ✅ Import เพิ่ม
+  RedemptionHistoryItem,
 } from "@/models/doctor.model";
 import { doctorService } from "@/services/doctor.service";
 
@@ -20,6 +21,9 @@ interface DoctorState {
   // ✅ [เพิ่มใหม่] State สำหรับหน้าบันทึกการทดสอบ (Test History)
   currentTestHistory: TestHistoryItem[];
 
+  // ✅ [เพิ่มใหม่] State สำหรับหน้าประวัติการแลกรางวัล
+  currentRedemptions: RedemptionHistoryItem[];
+
   // Actions
   fetchPatients: () => Promise<void>;
   createPatient: (payload: CreatePatientPayload) => Promise<boolean>;
@@ -28,6 +32,9 @@ interface DoctorState {
 
   // ✅ [เพิ่มใหม่] Action ดึงบันทึกการทดสอบ
   fetchPatientTestHistory: (patientId: number) => Promise<void>;
+
+  // ✅ Action ดึงประวัติการแลกรางวัล
+  fetchPatientRedemptions: (patientId: number) => Promise<void>;
 }
 
 export const useDoctorStore = create<DoctorState>((set, get) => ({
@@ -37,6 +44,7 @@ export const useDoctorStore = create<DoctorState>((set, get) => ({
   selectedPatient: null,
   currentHistory: [],
   currentTestHistory: [], // Init empty
+  currentRedemptions: [],
 
   fetchPatients: async () => {
     set({ isLoading: true });
@@ -207,6 +215,47 @@ export const useDoctorStore = create<DoctorState>((set, get) => ({
             animal_name: "แมว",
             stage_no: 1,
             symptom_note: "รู้สึกกลัวนิดหน่อย",
+          },
+        ],
+        isLoading: false,
+      });
+    }
+  },
+
+  // ✅ [Implementation ใหม่] ดึงประวัติการแลกรางวัล
+  fetchPatientRedemptions: async (patientId: number) => {
+    set({ isLoading: true, selectedPatient: null, currentRedemptions: [] });
+    try {
+      const res = await doctorService.getPatientRedemptions(patientId);
+      if (res.data) {
+        set({
+          selectedPatient: res.data.patient,
+          currentRedemptions: res.data.redemptions,
+          isLoading: false,
+        });
+      }
+    } catch (err) {
+      console.log("Using Mock Data for Redemptions");
+      const foundPatient =
+        get().patients.find((p) => p.id === patientId) ||
+        ({
+          id: patientId,
+          full_name: "พีระพงษ์ มาลา",
+          code_patient: "CHBCD0001",
+          fear_level: "สูง",
+          most_fear_animal: "งู",
+          created_at: "-",
+        } as Patient);
+
+      set({
+        selectedPatient: foundPatient,
+        currentRedemptions: [
+          {
+            id: 1,
+            date: "14 Aug 2025",
+            reward_name: "ส่วนลด 10 บาท",
+            coins_used: 30,
+            status: "success",
           },
         ],
         isLoading: false,
