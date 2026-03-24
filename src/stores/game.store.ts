@@ -52,19 +52,61 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   // ... (Implementation เดิม) ...
   fetchCategories: async () => {
-    /*...*/
+    set({ isLoading: true, error: null });
+    try {
+      const res = await gameService.getCategories();
+      set({ categories: res.data || [], isLoading: false });
+    } catch (err: unknown) {
+      console.error("Error fetching categories:", err);
+      set({ error: "ไม่สามารถโหลดหมวดหมู่ได้", isLoading: false });
+    }
   },
-  fetchAnimalsByCategory: async (id) => {
-    /*...*/
+  fetchAnimalsByCategory: async (categoryId) => {
+    set({ isLoading: true, error: null });
+    try {
+      const res = await gameService.getAnimalsByCategory(categoryId);
+      set({ currentAnimals: res.data || [], isLoading: false });
+    } catch (err: unknown) {
+      console.error("Error fetching animals:", err);
+      set({ error: "ไม่สามารถโหลดรายการสัตว์ได้", isLoading: false });
+    }
   },
-  fetchAnimalAndStages: async (id) => {
-    /*...*/
+  fetchAnimalAndStages: async (animalId) => {
+    set({ isLoading: true, error: null, selectedAnimal: null, stages: [] });
+    try {
+      const [animalRes, stagesRes] = await Promise.all([
+        gameService.getAnimalById(animalId),
+        gameService.getStageProgress(animalId),
+      ]);
+      set({
+        selectedAnimal: animalRes.data,
+        stages: stagesRes.data || [],
+        isLoading: false,
+      });
+    } catch (err: unknown) {
+      console.error("Error fetching animal and stages:", err);
+      set({ error: "ไม่สามารถโหลดข้อมูลด่านได้", isLoading: false });
+    }
   },
   fetchGameRules: async () => {
-    /*...*/
+    set({ isLoading: true, error: null });
+    try {
+      const res = await gameService.getGameRules();
+      set({ gameRules: res.data, isLoading: false });
+    } catch (err: unknown) {
+      console.error("Error fetching game rules:", err);
+      set({ error: "ไม่สามารถโหลดกฎเกมได้", isLoading: false });
+    }
   },
-  fetchStageDetail: async (id) => {
-    /*...*/
+  fetchStageDetail: async (stageId) => {
+    set({ isLoading: true, error: null, currentStageDetail: null });
+    try {
+      const res = await gameService.getStageDetail(stageId);
+      set({ currentStageDetail: res.data, isLoading: false });
+    } catch (err: unknown) {
+      console.error("Error fetching stage detail:", err);
+      set({ error: "ไม่สามารถโหลดรายละเอียดด่านได้", isLoading: false });
+    }
   },
 
   // ✅ [แก้ไข implementation]

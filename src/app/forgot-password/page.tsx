@@ -3,26 +3,21 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion"; // เพิ่ม AnimatePresence
-import { Mail, ArrowLeft, HeartHandshake, CheckCircle } from "lucide-react"; // เพิ่ม CheckCircle
+import { motion } from "framer-motion";
+import { Mail, ArrowLeft, HeartHandshake } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
-  const [showPopup, setShowPopup] = useState(false); // State สำหรับเปิด/ปิด Popup
 
+  // TODO: ต้องรอ Backend endpoint สำหรับ forgot-password ก่อนจึงจะเชื่อมต่อ API ได้
   const handleReset = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: เชื่อมต่อ API ตรงนี้
     console.log("Request reset for:", email);
 
-    // แทนที่จะ alert, เราสั่งเปิด Popup แทน
-    setShowPopup(true);
-  };
-
-  const handleClosePopup = () => {
-    setShowPopup(false);
-    router.push("/login"); // พอกดตกลง ค่อยย้ายหน้า
+    // ฟีเจอร์นี้ยังไม่พร้อมใช้งาน - รอ Backend endpoint
+    toast.error("ฟีเจอร์นี้ยังไม่พร้อมใช้งาน");
   };
 
   return (
@@ -95,50 +90,6 @@ export default function ForgotPasswordPage() {
         />
       </Link>
 
-      {/* --- ส่วน Popup (Modal) --- */}
-      <AnimatePresence>
-        {showPopup && (
-          // 1. Overlay สีดำจางๆ เต็มจอ
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          >
-            {/* 2. ตัว Popup Card */}
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              className="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl border border-teal-100"
-            >
-              {/* Icon Check */}
-              <div className="w-20 h-20 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="w-10 h-10 text-primary-dark" />
-              </div>
-
-              <h3 className="text-xl font-bold text-[#0D3B66] mb-2">
-                ส่งลิงก์เรียบร้อย!
-              </h3>
-              <p className="text-gray-600 mb-6">
-                กรุณาตรวจสอบอีเมล <br />
-                <span className="font-semibold text-primary-dark">
-                  {email}
-                </span>{" "}
-                <br />
-                เพื่อตั้งรหัสผ่านใหม่
-              </p>
-
-              <button
-                onClick={handleClosePopup}
-                className="w-full bg-[#D9886A] text-white font-bold py-3 rounded-xl hover:bg-[#c5765a] transition-colors shadow-md"
-              >
-                ตกลง
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

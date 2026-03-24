@@ -11,6 +11,7 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { useAuthStore } from "@/stores/auth.store";
+import { authService } from "@/services/auth.service";
 
 export default function PatientLoginPage() {
   const router = useRouter();
@@ -48,24 +49,20 @@ export default function PatientLoginPage() {
 
     console.log("Login with Code:", code);
 
-    // บันทึก User ลง Store (Mock)
-    login(
-      {
-        id: 99,
-        username: code,
-        // ✅ เพิ่ม full_name และ code_patient
-        full_name: "Patient Mock",
-        code_patient: code,
-        role: "patient",
-        balance: 0,
-      },
-      "mock-patient-token"
-    );
+    try {
+      const res = await authService.patientLogin(code);
+      login(res.user, res.token, res.refresh_token);
 
-    setSuccess(`เข้าสู่ระบบสำเร็จ! (Code: ${code})`);
-    setTimeout(() => {
-      router.push("/assessment");
-    }, 2000);
+      setSuccess(`เข้าสู่ระบบสำเร็จ! (Code: ${code})`);
+      setTimeout(() => {
+        router.push("/assessment");
+      }, 2000);
+    } catch (err: unknown) {
+      const error = err as Error & { response?: { data?: { error?: string } } };
+      setError(
+        error.response?.data?.error || "รหัสไม่ถูกต้อง หรือไม่พบผู้ป่วยในระบบ"
+      );
+    }
   };
 
   return (
@@ -121,7 +118,7 @@ export default function PatientLoginPage() {
             <div className="relative">
               <input
                 type="text"
-                placeholder="Ex. CHBCD0001"
+                placeholder="กรอกโค้ดที่ได้รับจากคุณหมอ"
                 className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 text-gray-700 bg-white transition-all font-bold tracking-widest ${
                   error
                     ? "border-red-500 focus:ring-red-200"

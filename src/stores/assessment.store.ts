@@ -71,11 +71,15 @@ export const useAssessmentStore = create<AssessmentState>((set, get) => ({
         answers: payloadAnswers,
       });
 
-      // ✅ สมมติ Backend ส่งกลับมาเป็น { message, fear_level, percent }
-      // เราก็เก็บ response ลง Store เลย (เพราะ service return response.data แล้ว)
+      // Backend returns: { message, fear_level, percent, description }
+      const data = response as Record<string, unknown>;
       set({
         isLoading: false,
-        result: response as unknown as AssessmentResult, // บันทึกผลลัพธ์
+        result: {
+          fear_level: (data.fear_level as string) as AssessmentResult["fear_level"],
+          percent: Number(data.percent) || 0,
+          description: (data.description as string) || "",
+        },
       });
 
       return true;

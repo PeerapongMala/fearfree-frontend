@@ -47,16 +47,16 @@ export default function AssessmentPage() {
 
   const handleNext = async () => {
     setError("");
-    const ageNum = parseInt(formData.age);
+    const ageNum = parseInt(formData.age.trim(), 10);
 
     // เช็คค่าว่าง
-    if (!formData.age || !formData.fearedAnimal.trim()) {
+    if (!formData.age.trim() || !formData.fearedAnimal.trim()) {
       setError("กรุณากรอกข้อมูลให้ครบถ้วน");
       return;
     }
 
     // --- ดัก Logic อายุ ---
-    if (ageNum < 5 || ageNum > 120) {
+    if (isNaN(ageNum) || ageNum < 5 || ageNum > 120) {
       setError("กรุณาระบุอายุที่ถูกต้อง (ระหว่าง 5 - 120 ปี)");
       return;
     }

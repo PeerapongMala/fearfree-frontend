@@ -8,6 +8,7 @@ import {
   RedemptionHistoryItem,
 } from "@/models/doctor.model";
 import { doctorService } from "@/services/doctor.service";
+import toast from "react-hot-toast";
 
 interface DoctorState {
   patients: Patient[];
@@ -52,7 +53,8 @@ export const useDoctorStore = create<DoctorState>((set, get) => ({
       const res = await doctorService.getPatients();
       set({ patients: res.data || [], isLoading: false });
     } catch (err) {
-      console.log("Using Mock Data for Patients");
+      console.warn("Using Mock Data for Patients", err);
+      toast.error("ไม่สามารถโหลดรายชื่อผู้ป่วยได้ กำลังใช้ข้อมูลตัวอย่าง");
       set({
         patients: [
           {
@@ -118,11 +120,11 @@ export const useDoctorStore = create<DoctorState>((set, get) => ({
       await doctorService.deletePatient(id);
       set((state) => ({
         patients: state.patients.filter((p) => p.id !== id),
+        recentCreated: state.recentCreated.filter((p) => p.id !== id),
       }));
     } catch (err) {
-      set((state) => ({
-        patients: state.patients.filter((p) => p.id !== id),
-      }));
+      console.error("Error deleting patient", err);
+      toast.error("ลบผู้ป่วยล้มเหลว กรุณาลองใหม่อีกครั้ง");
     }
   },
 
@@ -138,7 +140,8 @@ export const useDoctorStore = create<DoctorState>((set, get) => ({
         });
       }
     } catch (err) {
-      console.log("Using Mock Data for History");
+      console.warn("Using Mock Data for History", err);
+      toast.error("ไม่สามารถโหลดประวัติการเล่นได้ กำลังใช้ข้อมูลตัวอย่าง");
       const foundPatient =
         get().patients.find((p) => p.id === patientId) ||
         ({
@@ -176,7 +179,8 @@ export const useDoctorStore = create<DoctorState>((set, get) => ({
         });
       }
     } catch (err) {
-      console.log("Using Mock Data for Test History");
+      console.warn("Using Mock Data for Test History", err);
+      toast.error("ไม่สามารถโหลดบันทึกการทดสอบได้ กำลังใช้ข้อมูลตัวอย่าง");
 
       const foundPatient =
         get().patients.find((p) => p.id === patientId) ||
@@ -235,7 +239,8 @@ export const useDoctorStore = create<DoctorState>((set, get) => ({
         });
       }
     } catch (err) {
-      console.log("Using Mock Data for Redemptions");
+      console.warn("Using Mock Data for Redemptions", err);
+      toast.error("ไม่สามารถโหลดประวัติการแลกรางวัลได้ กำลังใช้ข้อมูลตัวอย่าง");
       const foundPatient =
         get().patients.find((p) => p.id === patientId) ||
         ({

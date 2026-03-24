@@ -85,41 +85,45 @@ export default function AssessmentQuestionsPage() {
 
           {/* กรณี 3: โหลดเสร็จแล้ว มีคำถาม */}
           {!isLoading && !error && questions.length > 0 && (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {questions.map((q, index) => (
                 <div
                   key={q.id}
-                  className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-white/50"
+                  className="bg-white/90 backdrop-blur-sm rounded-xl px-5 py-4 shadow-sm border border-white/50"
                 >
                   {/* คำถาม */}
-                  <h3 className="text-[#0D3B66] font-bold text-lg mb-4">
+                  <p className="text-[#0D3B66] font-medium text-sm mb-3 leading-relaxed">
                     {index + 1}. {q.prompt}
-                  </h3>
+                  </p>
 
                   {/* Slider */}
-                  <div className="px-4 py-2">
-                    <input
-                      type="range"
-                      min="0"
-                      max="10"
-                      step="1"
-                      value={answers[q.id] ?? 5} // ถ้ายังไม่มีค่าให้ default 5
-                      onChange={(e) => setAnswer(q.id, Number(e.target.value))}
-                      className="w-full h-2 bg-[#0D3B66]/20 rounded-lg appearance-none cursor-pointer accent-[#D9886A]"
-                    />
-
-                    {/* Labels */}
-                    <div className="flex justify-between text-sm font-medium text-[#0D3B66]/70 mt-3 relative">
-                      <span>น้อย</span>
-                      <span className="absolute left-1/2 -translate-x-1/2">
-                        ปานกลาง
-                      </span>
-                      <span>มาก</span>
+                  <div className="px-1 pt-8">
+                    <div className="relative">
+                      <input
+                        type="range"
+                        min="0"
+                        max="10"
+                        step="1"
+                        value={answers[q.id] ?? 5}
+                        onChange={(e) => setAnswer(q.id, Number(e.target.value))}
+                        className="assessment-slider w-full"
+                      />
+                      {/* แต้มคะแนน (ลอยตาม thumb) */}
+                      <div
+                        className="absolute -top-8 text-[#D9886A] font-bold text-sm pointer-events-none select-none bg-white/80 px-1.5 py-0.5 rounded-md shadow-sm"
+                        style={{
+                          left: `calc(${((answers[q.id] ?? 5) / 10) * 100}% - 12px)`,
+                        }}
+                      >
+                        {answers[q.id] ?? 5}
+                      </div>
                     </div>
 
-                    {/* แต้มคะแนน */}
-                    <div className="text-center mt-2 text-[#D9886A] font-bold text-xl">
-                      {answers[q.id] ?? 5}
+                    {/* Labels */}
+                    <div className="flex justify-between text-xs font-medium text-[#0D3B66]/60 mt-1.5">
+                      <span>น้อย</span>
+                      <span>ปานกลาง</span>
+                      <span>มาก</span>
                     </div>
                   </div>
                 </div>

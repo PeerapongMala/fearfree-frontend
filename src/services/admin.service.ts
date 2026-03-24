@@ -1,7 +1,5 @@
 // src/services/admin.service.ts
-
-import axios from "axios";
-import { useAuthStore } from "@/stores/auth.store";
+import apiClient from "@/services/apiClient";
 import {
   AdminReward,
   AdminRewardInput,
@@ -13,120 +11,64 @@ import {
   AdminStageInput,
 } from "@/models/admin.model";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
-
-const getAuthHeaders = () => {
-  const token = useAuthStore.getState().token;
-  return {
-    Authorization: `Bearer ${token}`,
-  };
-};
-
 export const adminService = {
   // === REWARDS ===
   getRewards: async () => {
-    const response = await axios.get<{ data: AdminReward[] }>(
-      `${API_URL}/admin/rewards`,
-      { headers: getAuthHeaders() }
-    );
+    const response = await apiClient.get<{ data: AdminReward[] }>("/admin/rewards");
     return response.data;
   },
   createReward: async (data: AdminRewardInput) => {
-    const response = await axios.post<{ success: boolean; data: AdminReward }>(
-      `${API_URL}/admin/rewards`,
-      data,
-      { headers: getAuthHeaders() }
-    );
+    const response = await apiClient.post<{ success: boolean; data: AdminReward }>("/admin/rewards", data);
     return response.data;
   },
   updateReward: async (id: number, data: AdminRewardInput) => {
-    const response = await axios.put<{ success: boolean; data: AdminReward }>(
-      `${API_URL}/admin/rewards/${id}`,
-      data,
-      { headers: getAuthHeaders() }
-    );
+    const response = await apiClient.put<{ success: boolean; data: AdminReward }>(`/admin/rewards/${id}`, data);
     return response.data;
   },
   deleteReward: async (id: number) => {
-    const response = await axios.delete<{ success: boolean }>(
-      `${API_URL}/admin/rewards/${id}`,
-      { headers: getAuthHeaders() }
-    );
+    const response = await apiClient.delete<{ success: boolean }>(`/admin/rewards/${id}`);
     return response.data;
   },
 
   // === CATEGORIES ===
   createCategory: async (data: AdminCategoryInput) => {
-    const response = await axios.post<{ success: boolean; data: AdminCategory }>(
-      `${API_URL}/admin/categories`,
-      data,
-      { headers: getAuthHeaders() }
-    );
+    const response = await apiClient.post<{ success: boolean; data: AdminCategory }>("/admin/categories", data);
     return response.data;
   },
   updateCategory: async (id: number, data: AdminCategoryInput) => {
-    const response = await axios.put<{ success: boolean; data: AdminCategory }>(
-      `${API_URL}/admin/categories/${id}`,
-      data,
-      { headers: getAuthHeaders() }
-    );
+    const response = await apiClient.put<{ success: boolean; data: AdminCategory }>(`/admin/categories/${id}`, data);
     return response.data;
   },
   deleteCategory: async (id: number) => {
-    const response = await axios.delete<{ success: boolean }>(
-      `${API_URL}/admin/categories/${id}`,
-      { headers: getAuthHeaders() }
-    );
+    const response = await apiClient.delete<{ success: boolean }>(`/admin/categories/${id}`);
     return response.data;
   },
 
   // === ANIMALS ===
   createAnimal: async (data: AdminAnimalInput) => {
-    const response = await axios.post<{ success: boolean; data: AdminAnimal }>(
-      `${API_URL}/admin/animals`,
-      data,
-      { headers: getAuthHeaders() }
-    );
+    const response = await apiClient.post<{ success: boolean; data: AdminAnimal }>("/admin/animals", data);
     return response.data;
   },
   updateAnimal: async (id: number, data: AdminAnimalInput) => {
-    const response = await axios.put<{ success: boolean; data: AdminAnimal }>(
-      `${API_URL}/admin/animals/${id}`,
-      data,
-      { headers: getAuthHeaders() }
-    );
+    const response = await apiClient.put<{ success: boolean; data: AdminAnimal }>(`/admin/animals/${id}`, data);
     return response.data;
   },
   deleteAnimal: async (id: number) => {
-    const response = await axios.delete<{ success: boolean }>(
-      `${API_URL}/admin/animals/${id}`,
-      { headers: getAuthHeaders() }
-    );
+    const response = await apiClient.delete<{ success: boolean }>(`/admin/animals/${id}`);
     return response.data;
   },
 
   // === STAGES ===
   createStage: async (data: AdminStageInput) => {
-    const response = await axios.post<{ success: boolean; data: AdminStage }>(
-      `${API_URL}/admin/stages`,
-      data,
-      { headers: getAuthHeaders() }
-    );
+    const response = await apiClient.post<{ success: boolean; data: AdminStage }>("/admin/stages", data);
     return response.data;
   },
   updateStage: async (id: number, data: AdminStageInput) => {
-    const response = await axios.put<{ success: boolean; data: AdminStage }>(
-      `${API_URL}/admin/stages/${id}`,
-      data,
-      { headers: getAuthHeaders() }
-    );
+    const response = await apiClient.put<{ success: boolean; data: AdminStage }>(`/admin/stages/${id}`, data);
     return response.data;
   },
   deleteStage: async (id: number) => {
-    const response = await axios.delete<{ success: boolean }>(
-      `${API_URL}/admin/stages/${id}`,
-      { headers: getAuthHeaders() }
-    );
+    const response = await apiClient.delete<{ success: boolean }>(`/admin/stages/${id}`);
     return response.data;
   },
 };

@@ -51,7 +51,7 @@ export default function LoginPage() {
     try {
       const res = await authService.login(formData);
       if (res.token) {
-        login(res.user, res.token);
+        login(res.user, res.token, res.refresh_token);
         setSuccess("เข้าสู่ระบบสำเร็จ! กำลังพาไปหน้าถัดไป...");
         setTimeout(() => {
           if (res.user.role === "admin") {
@@ -133,7 +133,7 @@ export default function LoginPage() {
             </label>
             <input
               type="text"
-              placeholder="ชื่อผู้ใช้งาน (ขั้นต่ำ 6 ตัวอักษร)"
+              placeholder="ชื่อผู้ใช้งาน"
               className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 text-gray-700 bg-white transition-all ${inputBorderClass}`}
               value={formData.username}
               onChange={(e) => {
@@ -151,7 +151,7 @@ export default function LoginPage() {
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
-                placeholder="รหัสผ่าน (ขั้นต่ำ 8 ตัวอักษร)"
+                placeholder="รหัสผ่าน"
                 className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 text-gray-700 bg-white pr-12 transition-all ${inputBorderClass}`}
                 value={formData.password}
                 onChange={(e) => {

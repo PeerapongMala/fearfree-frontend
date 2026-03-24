@@ -5,7 +5,9 @@ import { UserProfile } from "@/models/user.model";
 interface AuthState {
   user: UserProfile | null;
   token: string | null;
-  login: (user: UserProfile, token: string) => void;
+  refreshToken: string | null;
+  login: (user: UserProfile, token: string, refreshToken?: string) => void;
+  setTokens: (token: string, refreshToken: string) => void;
   logout: () => void;
 }
 
@@ -14,8 +16,11 @@ export const useAuthStore = create<AuthState>()(
     (set) => ({
       user: null,
       token: null,
-      login: (user, token) => set({ user, token }),
-      logout: () => set({ user: null, token: null }),
+      refreshToken: null,
+      login: (user, token, refreshToken) =>
+        set({ user, token, refreshToken: refreshToken ?? null }),
+      setTokens: (token, refreshToken) => set({ token, refreshToken }),
+      logout: () => set({ user: null, token: null, refreshToken: null }),
     }),
     {
       name: "auth-storage", // name of the item in the storage (must be unique)

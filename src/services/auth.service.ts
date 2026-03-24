@@ -1,12 +1,7 @@
 // src/services/auth.service.ts
-import axios from "axios";
+import apiClient from "@/services/apiClient";
 import { UserProfile } from "@/models/user.model";
 
-// เรียก URL จาก Environment Variable
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
-
-// 1. สร้าง Interface
 interface LoginData {
   username: string;
   password?: string;
@@ -18,33 +13,41 @@ interface RegisterData {
   email?: string;
   full_name?: string;
   age?: number;
-  confirmPassword?: string;
 }
 
 export const authService = {
   login: async (data: LoginData) => {
-    const response = await axios.post<{
+    const response = await apiClient.post<{
       message: string;
       token: string;
+      refresh_token: string;
       user: UserProfile;
-    }>(`${API_URL}/auth/login`, data);
+    }>("/auth/login", data);
+    return response.data;
+  },
+
+  refreshToken: async (refreshToken: string) => {
+    const response = await apiClient.post<{
+      token: string;
+      refresh_token: string;
+    }>("/auth/refresh", { refresh_token: refreshToken });
     return response.data;
   },
 
   patientLogin: async (code: string) => {
-    const response = await axios.post<{
+    const response = await apiClient.post<{
       message: string;
       token: string;
       user: UserProfile;
-    }>(`${API_URL}/auth/patient-login`, { code });
+    }>("/auth/patient-login", { code });
     return response.data;
   },
 
   register: async (data: RegisterData) => {
-    const response = await axios.post<{
+    const response = await apiClient.post<{
       message: string;
       user_id: number;
-    }>(`${API_URL}/auth/signup`, data);
+    }>("/auth/signup", data);
     return response.data;
   },
 };

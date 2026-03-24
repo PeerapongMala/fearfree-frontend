@@ -32,14 +32,23 @@ export default function DoctorDashboard() {
   const [newName, setNewName] = useState("");
   const [newFear, setNewFear] = useState("");
   const [isCreating, setIsCreating] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
     // เช็คสิทธิ์: ถ้าไม่ใช่หมอ ให้เด้งออก
     if (!user || user.role !== "doctor") {
-      // router.push('/login'); // เปิดบรรทัดนี้เมื่อระบบ Login พร้อม
+      router.push("/login");
+      return;
     }
     fetchPatients();
-  }, [user, fetchPatients, router]);
+  }, [mounted, user, fetchPatients, router]);
+
+  if (!mounted) return null;
 
   const handleLogout = () => {
     logout();

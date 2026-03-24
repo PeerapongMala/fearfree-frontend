@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import { useGameStore } from "@/stores/game.store";
@@ -28,17 +28,20 @@ export default function AnimalSelectionPage() {
   const currentCategoryName =
     categories.find((c) => c.id === categoryId)?.cname || "เลือกสัตว์";
 
+  const hasFetchedCategories = useRef(false);
+
   useEffect(() => {
     if (categoryId && !isNaN(categoryId)) {
       // 1. โหลดรายชื่อสัตว์
       fetchAnimalsByCategory(categoryId);
 
-      // 2. ถ้ายังไม่มี categories ใน store ให้โหลดด้วย (เพื่อเอาชื่อหัวข้อ)
-      if (categories.length === 0) {
+      // 2. ถ้ายังไม่มี categories ใน store ให้โหลดด้วย (เพื่อเอาชื่อหัวข้อ) - only once
+      if (categories.length === 0 && !hasFetchedCategories.current) {
+        hasFetchedCategories.current = true;
         fetchCategories();
       }
     }
-  }, [categoryId, fetchAnimalsByCategory, fetchCategories, categories.length]);
+  }, [categoryId, fetchAnimalsByCategory, fetchCategories]);
 
   const handleSelectAnimal = (animalId: number) => {
     console.log("Selected Animal ID:", animalId);

@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import AssessmentStepper from "@/components/AssessmentStepper";
@@ -14,14 +13,28 @@ export default function AssessmentResultPage() {
   // ดึงผลลัพธ์จาก Store (ที่ Backend คำนวณส่งมาให้)
   const { result } = useAssessmentStore();
 
-  // ป้องกันคนเข้าหน้านี้โดยไม่ได้ทำแบบทดสอบ
-  useEffect(() => {
-    if (!result) {
-      router.push("/assessment");
-    }
-  }, [result, router]);
-
-  if (!result) return null; // หรือใส่ Loading
+  // ถ้าไม่มีผลลัพธ์ (เช่น refresh หน้า) แสดงข้อความแทนการ redirect ที่อาจวนลูป
+  if (!result) {
+    return (
+      <div className="min-h-screen flex flex-col bg-linear-to-b from-teal-50 to-teal-100">
+        <Navbar />
+        <main className="flex-1 container max-w-5xl mx-auto px-4 py-10 flex flex-col items-center justify-center">
+          <div className="bg-white/90 backdrop-blur-md shadow-xl rounded-3xl p-8 md:p-12 border border-[#0D3B66]/20 text-center">
+            <h2 className="text-2xl font-bold text-[#0D3B66] mb-4">
+              ไม่พบผลการประเมิน
+            </h2>
+            <p className="text-gray-600 mb-6">กรุณาทำแบบประเมินใหม่อีกครั้ง</p>
+            <button
+              onClick={() => router.push("/assessment")}
+              className="bg-[#D9886A] hover:bg-[#c5765a] text-white text-lg font-bold py-3 px-10 rounded-full shadow-lg transition-transform hover:scale-105 active:scale-95"
+            >
+              กลับไปทำแบบประเมิน
+            </button>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-linear-to-b from-teal-50 to-teal-100">

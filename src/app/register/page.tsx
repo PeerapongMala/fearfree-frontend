@@ -12,13 +12,12 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { authService } from "@/services/auth.service";
+import toast from "react-hot-toast";
 
 export default function RegisterPage() {
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
   const [error, setError] = useState("");
 
   const [formData, setFormData] = useState({
@@ -26,7 +25,6 @@ export default function RegisterPage() {
     email: "",
     username: "",
     password: "",
-    confirmPassword: "",
   });
 
   const validateEmail = (email: string) => {
@@ -39,10 +37,10 @@ export default function RegisterPage() {
 
     // 1. เช็คค่าว่าง
     if (
+      !formData.fullName ||
       !formData.username ||
       !formData.password ||
-      !formData.email ||
-      !formData.confirmPassword
+      !formData.email
     ) {
       setError("กรุณากรอกข้อมูลให้ครบถ้วน");
       return;
@@ -66,20 +64,14 @@ export default function RegisterPage() {
       return;
     }
 
-    // 5. เช็คว่ารหัสผ่านตรงกันไหม
-    if (formData.password !== formData.confirmPassword) {
-      setError("รหัสผ่านยืนยันไม่ตรงกับรหัสผ่าน");
-      return;
-    }
-
     // --- จุดที่ต้องต่อ API ---
-    const { confirmPassword: _confirmPassword, fullName, ...rest } = formData;
+    const { fullName, ...rest } = formData;
     const payload = { ...rest, full_name: fullName };
     console.log("Register Data to API:", payload);
 
     try {
       await authService.register(payload);
-      alert("สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ");
+      toast.success("สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ");
       router.push("/login");
     } catch (err: unknown) {
       const error = err as Error & { response?: { data?: { error?: string } } };
@@ -159,7 +151,7 @@ export default function RegisterPage() {
             </label>
             <input
               type="text"
-              placeholder="ชื่อผู้ใช้งาน (ขั้นต่ำ 6 ตัวอักษร)"
+              placeholder="ชื่อผู้ใช้งาน"
               className={inputClass(
                 !!error &&
                   formData.username.length > 0 &&
@@ -180,7 +172,7 @@ export default function RegisterPage() {
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
-                placeholder="รหัสผ่าน (ขั้นต่ำ 8 ตัวอักษร)"
+                placeholder="รหัสผ่าน"
                 className={`${inputClass(
                   !!error && formData.password.length < 8
                 )} pr-12`}
@@ -196,33 +188,6 @@ export default function RegisterPage() {
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#0D3B66]"
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-[#0D3B66] font-bold text-sm">
-              ยืนยันรหัสผ่าน<span className="text-red-500">*</span>
-            </label>
-            <div className="relative">
-              <input
-                type={showConfirmPassword ? "text" : "password"}
-                placeholder="กรอกรหัสผ่านอีกครั้ง"
-                className={`${inputClass(
-                  !!error && formData.confirmPassword !== formData.password
-                )} pr-12`}
-                value={formData.confirmPassword}
-                onChange={(e) => {
-                  setFormData({ ...formData, confirmPassword: e.target.value });
-                  setError("");
-                }}
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#0D3B66]"
-              >
-                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
           </div>

@@ -7,6 +7,7 @@ import {
 } from "@/models/user.model";
 import { userService } from "@/services/user.service";
 import { useAuthStore } from "@/stores/auth.store";
+import toast from "react-hot-toast";
 
 interface UserState {
   profile: UserProfile | null;
@@ -34,7 +35,8 @@ export const useUserStore = create<UserState>((set) => ({
       const res = await userService.getProfile();
       set({ profile: res.data, isLoading: false });
     } catch (error) {
-      console.log("Using Mock Data for Profile");
+      console.warn("Using Mock Data for Profile", error);
+      toast.error("ไม่สามารถโหลดโปรไฟล์ได้ กำลังใช้ข้อมูลตัวอย่าง");
       const currentUser = useAuthStore.getState().user;
       const isDoctor = currentUser?.role === "doctor";
       set({
@@ -70,7 +72,8 @@ export const useUserStore = create<UserState>((set) => ({
       const res = await userService.getRedemptionHistory();
       set({ redemptionHistory: res.data, isLoading: false });
     } catch (error) {
-      console.log("Using Mock Data for Redemption History");
+      console.warn("Using Mock Data for Redemption History", error);
+      toast.error("ไม่สามารถโหลดประวัติการแลกรางวัลได้ กำลังใช้ข้อมูลตัวอย่าง");
       set({
         redemptionHistory: [
           {
@@ -107,7 +110,8 @@ export const useUserStore = create<UserState>((set) => ({
       const res = await userService.getMyPlayHistory();
       set({ myPlayHistory: res.data, isLoading: false });
     } catch (error) {
-      console.log("Using Mock Data for Play History");
+      console.warn("Using Mock Data for Play History", error);
+      toast.error("ไม่สามารถโหลดประวัติการเล่นได้ กำลังใช้ข้อมูลตัวอย่าง");
       set({
         myPlayHistory: [
           { animal_name: "งู", progress_percent: 100 },

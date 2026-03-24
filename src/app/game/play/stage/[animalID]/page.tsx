@@ -12,7 +12,7 @@ export default function StageSelectionPage() {
   const params = useParams();
 
   // แปลงและดัก Error
-  const animalId = Number(params.animalId);
+  const animalId = Number(params.animalID);
 
   const { selectedAnimal, stages, isLoading, error, fetchAnimalAndStages } =
     useGameStore();

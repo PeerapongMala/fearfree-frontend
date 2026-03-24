@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -53,6 +53,17 @@ function GameRunner({
 
   const currentStageObj = stages.find((s) => s.stage_no === stageNo);
   const stageId = currentStageObj ? currentStageObj.id : 0;
+  const [stagesFetched, setStagesFetched] = useState(false);
+
+  // Task 5: Fetch stages on mount if empty (e.g. user refreshed the page)
+  useEffect(() => {
+    const gameStore = useGameStore.getState();
+    if (stages.length === 0 && animalId) {
+      gameStore.fetchAnimalAndStages(animalId).then(() => setStagesFetched(true));
+    } else {
+      setStagesFetched(true);
+    }
+  }, [animalId, stages.length]);
 
   const handleExit = () => router.back();
 
@@ -69,15 +80,24 @@ function GameRunner({
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (gameState === "playing" && timeLeft > 0 && !isLoading && !showSuccess) {
-      timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
+      timer = setInterval(() => setTimeLeft((prev) => Math.max(0, prev - 1)), 1000);
     }
     return () => {
       if (timer) clearInterval(timer);
     };
   }, [gameState, timeLeft, isLoading, showSuccess]);
 
+  // Task 4: Auto-submit when timer reaches 0
+  const submittedRef = useRef(false);
+  useEffect(() => {
+    if (timeLeft === 0 && gameState === "playing" && !showSuccess && !submittedRef.current) {
+      submittedRef.current = true;
+      handleSubmit();
+    }
+  }, [timeLeft, gameState, showSuccess]);
+
   // Submit Result Logic
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     if (!stageId) {
       alert("ไม่พบข้อมูลด่าน ไม่สามารถบันทึกได้");
       return;
@@ -98,7 +118,7 @@ function GameRunner({
     } else {
       alert("เกิดข้อผิดพลาดในการบันทึกผล");
     }
-  };
+  }, [stageId, user?.role, symptomNote, submitStage]);
 
   // ปุ่ม "เสร็จสิ้น" -> เช็คจาก Backend ว่ามีด่านต่อไหม
   const handleFinish = () => {
@@ -113,6 +133,26 @@ function GameRunner({
       router.push(`/game/play/stage/${animalId}`);
     }
   };
+
+  // Task 5: If stages fetched but stageId is still 0, show a message
+  if (stagesFetched && stageId === 0) {
+    return (
+      <div className="min-h-screen flex flex-col bg-[#E6F4F1] font-sans">
+        <Navbar />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-[#0D3B66] text-xl font-bold mb-4">ไม่พบข้อมูลด่านนี้</p>
+            <button
+              onClick={() => router.back()}
+              className="bg-[#0D3B66] text-white text-lg font-bold py-3 px-12 rounded-full shadow-lg hover:scale-105"
+            >
+              กลับ
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // --- VIEW 1: WARNING ---
   if (gameState === "warning") {

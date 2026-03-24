@@ -6,6 +6,7 @@ import Image from "next/image";
 import { ArrowLeft, Star, Loader2 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { useUserStore } from "@/stores/user.store";
+import toast from "react-hot-toast";
 import { useRewardStore } from "@/stores/reward.store";
 
 export default function RewardsPage() {
@@ -27,17 +28,17 @@ export default function RewardsPage() {
 
     // เช็คเหรียญก่อนแลก
     if ((profile.coins || 0) < cost) {
-      alert("เหรียญของคุณไม่เพียงพอ!");
+      toast.error("เหรียญของคุณไม่เพียงพอ!");
       return;
     }
 
-    if (confirm("ยืนยันการแลกรางวัลนี้?")) {
+    if (window.confirm("ยืนยันการแลกรางวัลนี้?")) {
       const success = await redeemReward(rewardId);
       if (success) {
-        alert("แลกรางวัลสำเร็จ!");
+        toast.success("แลกรางวัลสำเร็จ!");
         // เหรียญจะถูกอัปเดตอัตโนมัติเพราะใน Store เราสั่ง fetchProfile() ไว้แล้ว
       } else {
-        alert("เกิดข้อผิดพลาดในการแลกรางวัล");
+        toast.error("เกิดข้อผิดพลาดในการแลกรางวัล");
       }
     }
   };

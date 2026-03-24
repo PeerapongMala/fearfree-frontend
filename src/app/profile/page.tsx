@@ -131,16 +131,18 @@ export default function ProfilePage() {
                   </div>
                 </div>
               )}
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-[#0D3B66]">
-                  <Building size={20} />
+              {isPatient && (
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-[#0D3B66]">
+                    <Building size={20} />
+                  </div>
+                  <div>
+                    <p className="text-[#0D3B66] text-sm ">
+                      {profile.hospital_name || "-"}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-[#0D3B66] text-sm ">
-                    {profile.hospital_name || "-"}
-                  </p>
-                </div>
-              </div>
+              )}
             </div>
 
             {/* Right Column */}
@@ -159,7 +161,7 @@ export default function ProfilePage() {
                         {profile.fear_percentage || 0}
                       </p>
                     </div>
-                    <div className="h-10 w-[1px bg-gray-200"></div>
+                    <div className="h-10 w-[1px] bg-gray-200"></div>
                     <div>
                       <p className="text-[#0D3B66] font-bold text-sm mb-1">
                         ระดับความกลัว

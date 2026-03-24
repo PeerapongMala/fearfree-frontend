@@ -72,12 +72,6 @@ export default function DoctorRedemptionHistoryPage() {
 
             {/* Redemptions Table Card */}
             <div className="bg-white rounded-3xl p-8 shadow-md relative min-h-[400px]">
-              <div className="absolute top-0 right-0 p-4">
-                <div className="w-10 h-10 bg-[#007bff] rounded-full border-2 border-white flex items-center justify-center shadow-md text-white font-bold">
-                  B
-                </div>
-              </div>
-
               <div className="overflow-x-auto mt-4">
                 <table className="w-full text-left border-collapse">
                   <thead>
@@ -99,8 +93,8 @@ export default function DoctorRedemptionHistoryPage() {
                         <td className="p-4 font-medium">{r.date}</td>
                         <td className="p-4">{r.reward_name}</td>
                         <td className="p-4">{r.coins_used}</td>
-                        <td className="p-4 font-bold text-green-500">
-                          {r.status === 'success' ? 'สำเร็จ' : 'สำเร็จ'}
+                        <td className={`p-4 font-bold ${r.status === 'success' ? 'text-green-500' : r.status === 'pending' ? 'text-yellow-500' : 'text-gray-500'}`}>
+                          {r.status === 'success' ? 'สำเร็จ' : r.status === 'pending' ? 'รอดำเนินการ' : r.status}
                         </td>
                       </tr>
                     ))}
