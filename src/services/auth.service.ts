@@ -38,6 +38,7 @@ export const authService = {
     const response = await apiClient.post<{
       message: string;
       token: string;
+      refresh_token: string;
       user: UserProfile;
     }>("/auth/patient-login", { code });
     return response.data;
