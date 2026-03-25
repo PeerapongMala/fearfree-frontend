@@ -44,7 +44,7 @@ export default function AnimalSelectionPage() {
   }, [categoryId, fetchAnimalsByCategory, fetchCategories]);
 
   const handleSelectAnimal = (animalId: number) => {
-    console.log("Selected Animal ID:", animalId);
+
     router.push(`/game/play/stage/${animalId}`);
   };
 

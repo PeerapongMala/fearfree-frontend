@@ -67,7 +67,6 @@ export default function RegisterPage() {
     // --- จุดที่ต้องต่อ API ---
     const { fullName, ...rest } = formData;
     const payload = { ...rest, full_name: fullName };
-    console.log("Register Data to API:", payload);
 
     try {
       await authService.register(payload);

@@ -47,7 +47,7 @@ export default function PatientLoginPage() {
       return;
     }
 
-    console.log("Login with Code:", code);
+
 
     try {
       const res = await authService.patientLogin(code);

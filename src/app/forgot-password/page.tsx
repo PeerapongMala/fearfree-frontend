@@ -14,7 +14,6 @@ export default function ForgotPasswordPage() {
   // TODO: ต้องรอ Backend endpoint สำหรับ forgot-password ก่อนจึงจะเชื่อมต่อ API ได้
   const handleReset = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Request reset for:", email);
 
     // ฟีเจอร์นี้ยังไม่พร้อมใช้งาน - รอ Backend endpoint
     toast.error("ฟีเจอร์นี้ยังไม่พร้อมใช้งาน");

@@ -17,7 +17,6 @@ export default function CategoriesPage() {
   }, [fetchCategories]);
 
   const handleSelectCategory = (id: number) => {
-    console.log("Selected ID:", id);
     // ส่ง id ไปหน้าเล่นเกม (เช่น /game/play/1)
     // Backend จะได้เอา ID ไป Query ตาราง animal ต่อได้ง่ายๆ
     router.push(`/game/play/${id}`);

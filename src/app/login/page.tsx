@@ -46,7 +46,7 @@ export default function LoginPage() {
     }
 
     // --- ส่วนต่อ API ---
-    console.log("Login with:", formData);
+
 
     try {
       const res = await authService.login(formData);

@@ -26,7 +26,6 @@ export default function StageSelectionPage() {
   const handleSelectStage = (stageNo: number, isLocked: boolean) => {
     if (isLocked) return;
 
-    console.log(`Start Stage: ${stageNo} for Animal: ${animalId}`);
     // ไปหน้า Gameplay (Run)
     router.push(`/game/play/run/${animalId}/${stageNo}`);
   };
