@@ -23,8 +23,9 @@ export const useAuthStore = create<AuthState>()(
       logout: () => set({ user: null, token: null, refreshToken: null }),
     }),
     {
-      name: "auth-storage", // name of the item in the storage (must be unique)
-      storage: createJSONStorage(() => sessionStorage), // (optional) by default, 'localStorage' is used
+      name: "auth-storage",
+      storage: createJSONStorage(() => sessionStorage),
+      partialize: (state) => ({ user: state.user }), // never persist tokens in browser storage
     }
   )
 );

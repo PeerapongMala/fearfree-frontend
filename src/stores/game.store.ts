@@ -74,13 +74,15 @@ export const useGameStore = create<GameState>((set, get) => ({
   fetchAnimalAndStages: async (animalId) => {
     set({ isLoading: true, error: null, selectedAnimal: null, stages: [] });
     try {
-      const [animalRes, stagesRes] = await Promise.all([
-        gameService.getAnimalById(animalId),
-        gameService.getStageProgress(animalId),
-      ]);
+      const stagesRes = await gameService.getStageProgress(animalId);
+      const stagesData = stagesRes.data || [];
+
+      // Try to find the animal from already-loaded currentAnimals
+      const knownAnimal = get().currentAnimals.find((a) => a.id === animalId);
+
       set({
-        selectedAnimal: animalRes.data,
-        stages: stagesRes.data || [],
+        selectedAnimal: knownAnimal ?? { id: animalId, name: "", category_id: 0 },
+        stages: stagesData,
         isLoading: false,
       });
     } catch (err: unknown) {
@@ -120,7 +122,8 @@ export const useGameStore = create<GameState>((set, get) => ({
       return result; // ส่ง data จริงกลับไป (มี earned_coins, next_stage)
     } catch (err: unknown) {
       console.error("Error submitting stage:", err);
-      return null; // ถ้า error ส่ง null
+      set({ error: "ไม่สามารถบันทึกผลด่านได้ กรุณาตรวจสอบการเชื่อมต่อ" });
+      return null;
     }
   },
 

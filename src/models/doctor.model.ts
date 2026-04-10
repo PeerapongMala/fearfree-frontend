@@ -45,14 +45,9 @@ export interface PatientTestHistoryResponse {
   test_history: TestHistoryItem[];
 }
 
-// ✅ [เพิ่มใหม่] สำหรับหน้าประวัติการแลกของรางวัล
-export interface RedemptionHistoryItem {
-  id: number;
-  date: string; // '14 Aug 2025'
-  reward_name: string;
-  coins_used: number;
-  status: string; // 'success'
-}
+// Use shared RedemptionHistoryItem from user.model.ts
+import type { RedemptionHistoryItem } from "@/models/user.model";
+export type { RedemptionHistoryItem };
 
 export interface PatientRedemptionHistoryResponse {
   patient: Patient;

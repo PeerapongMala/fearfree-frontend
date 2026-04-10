@@ -53,7 +53,7 @@ export default function PatientLoginPage() {
       const res = await authService.patientLogin(code);
       login(res.user, res.token, res.refresh_token);
 
-      setSuccess(`เข้าสู่ระบบสำเร็จ! (Code: ${code})`);
+      setSuccess("เข้าสู่ระบบสำเร็จ! กำลังพาไปหน้าถัดไป...");
       setTimeout(() => {
         router.push("/assessment");
       }, 2000);

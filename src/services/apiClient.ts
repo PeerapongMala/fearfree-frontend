@@ -70,6 +70,8 @@ apiClient.interceptors.response.use(
         return Promise.reject(error);
       }
 
+      originalRequest._retry = true;
+
       // If already refreshing, queue this request
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
@@ -82,7 +84,7 @@ apiClient.interceptors.response.use(
           .catch((err) => Promise.reject(err));
       }
 
-      originalRequest._retry = true;
+      // Set flag synchronously before any await to prevent race condition
       isRefreshing = true;
 
       try {
@@ -119,7 +121,9 @@ export const requestApi = async <T>(
   mockData?: T
 ): Promise<AxiosResponse<T>> => {
   if (USE_MOCK && mockData !== undefined) {
-    console.log(`[MOCK API] ${config.method?.toUpperCase()} ${config.url}`);
+    if (process.env.NODE_ENV === "development") {
+      console.log(`[MOCK API] ${config.method?.toUpperCase()} ${config.url}`);
+    }
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 500));
     return {
@@ -127,7 +131,7 @@ export const requestApi = async <T>(
       status: 200,
       statusText: "OK",
       headers: {},
-      config: config as any,
+      config: config as AxiosResponse<T>["config"],
     };
   }
 

@@ -1,9 +1,17 @@
 // src/stores/admin.store.ts
 import { create } from "zustand";
-import { AdminReward, AdminRewardInput, AdminCategoryInput, AdminAnimalInput, AdminStageInput } from "@/models/admin.model";
+import axios from "axios";
+import { AdminReward, AdminRewardInput, AdminCategoryInput, AdminAnimalInput, AdminStageInput, AdminCategoryWithHierarchy } from "@/models/admin.model";
 import { adminService } from "@/services/admin.service";
 import { gameService } from "@/services/game.service";
 import toast from "react-hot-toast";
+
+function getErrorMessage(err: unknown, fallback: string): string {
+  if (axios.isAxiosError(err)) {
+    return err.response?.data?.error ?? fallback;
+  }
+  return fallback;
+}
 
 interface AdminState {
   rewards: AdminReward[];
@@ -15,7 +23,7 @@ interface AdminState {
   deleteReward: (id: number) => Promise<boolean>;
 
   // Game Hierarchy State
-  categories: any[]; // Using any for nested structure to avoid TS issues
+  categories: AdminCategoryWithHierarchy[];
   fetchGamesHierarchy: () => Promise<void>;
 
   // Mutations
@@ -37,7 +45,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     try {
       const res = await adminService.getRewards();
       set({ rewards: res.data || [], isLoading: false });
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       toast.error("ไม่สามารถดึงข้อมูลของรางวัลได้");
       set({ isLoading: false });
@@ -54,8 +62,8 @@ export const useAdminStore = create<AdminState>((set, get) => ({
         return true;
       }
       return false;
-    } catch (err: any) {
-      toast.error(err.response?.data?.error || "เพิ่มของรางวัลไม่สำเร็จ");
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, "เพิ่มของรางวัลไม่สำเร็จ"));
       return false;
     } finally {
       set({ isLoading: false });
@@ -74,8 +82,8 @@ export const useAdminStore = create<AdminState>((set, get) => ({
         return true;
       }
       return false;
-    } catch (err: any) {
-      toast.error(err.response?.data?.error || "อัปเดตไม่สำเร็จ");
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, "อัปเดตไม่สำเร็จ"));
       return false;
     } finally {
       set({ isLoading: false });
@@ -94,7 +102,7 @@ export const useAdminStore = create<AdminState>((set, get) => ({
         return true;
       }
       return false;
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error("ลบของรางวัลไม่สำเร็จ");
       return false;
     } finally {
@@ -107,8 +115,9 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     set({ isLoading: true });
     try {
       const res = await gameService.getCategories();
-      set({ categories: res.data || [], isLoading: false });
-    } catch (err: any) {
+      // Backend returns nested categories with animals/stages when preloaded
+      set({ categories: (res.data || []) as AdminCategoryWithHierarchy[], isLoading: false });
+    } catch (err: unknown) {
       console.error(err);
       toast.error("ดึงข้อมูลโครงสร้างเกมไม่สำเร็จ");
       set({ isLoading: false });

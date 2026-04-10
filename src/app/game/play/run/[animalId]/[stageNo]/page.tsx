@@ -55,25 +55,30 @@ function GameRunner({
   const stageId = currentStageObj ? currentStageObj.id : 0;
   const [stagesFetched, setStagesFetched] = useState(false);
 
+  const fetchAnimalAndStages = useGameStore((s) => s.fetchAnimalAndStages);
+
   // Task 5: Fetch stages on mount if empty (e.g. user refreshed the page)
   useEffect(() => {
-    const gameStore = useGameStore.getState();
     if (stages.length === 0 && animalId) {
-      gameStore.fetchAnimalAndStages(animalId).then(() => setStagesFetched(true));
+      fetchAnimalAndStages(animalId).then(() => setStagesFetched(true));
     } else {
       setStagesFetched(true);
     }
-  }, [animalId, stages.length]);
+  }, [animalId, stages.length, fetchAnimalAndStages]);
 
   const handleExit = () => router.back();
+
+  const gameRules = useGameStore((s) => s.gameRules);
 
   const handleStartGame = async () => {
     setGameState("playing");
     if (stageId) {
       await Promise.all([fetchGameRules(), fetchStageDetail(stageId)]);
+      // Read from store after state has settled
       const rules = useGameStore.getState().gameRules;
-      if (rules?.stage_duration_seconds)
+      if (rules?.stage_duration_seconds) {
         setTimeLeft(rules.stage_duration_seconds);
+      }
     }
   };
 
@@ -86,15 +91,6 @@ function GameRunner({
       if (timer) clearInterval(timer);
     };
   }, [gameState, timeLeft, isLoading, showSuccess]);
-
-  // Task 4: Auto-submit when timer reaches 0
-  const submittedRef = useRef(false);
-  useEffect(() => {
-    if (timeLeft === 0 && gameState === "playing" && !showSuccess && !submittedRef.current) {
-      submittedRef.current = true;
-      handleSubmit();
-    }
-  }, [timeLeft, gameState, showSuccess]);
 
   // Submit Result Logic
   const handleSubmit = useCallback(async () => {
@@ -109,16 +105,24 @@ function GameRunner({
       return;
     }
 
-    // ✅ รับค่า Result ที่เป็น Object กลับมา
     const result = await submitStage(stageId, true, symptomNote);
 
     if (result && result.success) {
-      setRewardData(result); // ✅ บันทึกผลลัพธ์จาก Backend ลง State
+      setRewardData(result);
       setShowSuccess(true);
     } else {
       alert("เกิดข้อผิดพลาดในการบันทึกผล");
     }
   }, [stageId, user?.role, symptomNote, submitStage]);
+
+  // Task 4: Auto-submit when timer reaches 0
+  const submittedRef = useRef(false);
+  useEffect(() => {
+    if (timeLeft === 0 && gameState === "playing" && !showSuccess && !submittedRef.current) {
+      submittedRef.current = true;
+      handleSubmit();
+    }
+  }, [timeLeft, gameState, showSuccess, handleSubmit]);
 
   // ปุ่ม "เสร็จสิ้น" -> เช็คจาก Backend ว่ามีด่านต่อไหม
   const handleFinish = () => {

@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 export default function LoginSelectPage() {
   return (
     // ใช้ Flex-col เพื่อให้ Navbar อยู่บน และเนื้อหาอยู่กลางจอ
-    <div className="min-h-screen flex flex-col relative overflow-hidden from-teal-50 to-teal-100">
+    <div className="min-h-screen flex flex-col relative overflow-hidden bg-linear-to-b from-teal-50 to-teal-100">
       {/* 1. Navbar */}
       <Navbar />
 

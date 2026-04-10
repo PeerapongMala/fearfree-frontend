@@ -51,14 +51,10 @@ export default function StageSelectionPage() {
             {/* 1. ชื่อสัตว์ */}
             <div className="relative inline-block mb-12">
               <div className="bg-[#D1E8E8] text-[#0D3B66] text-3xl md:text-4xl font-bold px-16 py-4 rounded-3xl shadow-sm border border-white/50">
-                {selectedAnimal?.aname || "กำลังโหลด..."}
+                {selectedAnimal?.name || "กำลังโหลด..."}
               </div>
 
-              {selectedAnimal?.is_recommended && (
-                <div className="absolute -top-2 -right-6 w-10 h-10 bg-[#007bff] rounded-full border-2 border-white flex items-center justify-center shadow-md animate-bounce">
-                  <span className="text-white font-bold text-lg">B</span>
-                </div>
-              )}
+              {/* Badge placeholder — add is_recommended to backend model to enable */}
             </div>
 
             {/* 2. Grid ด่าน 1-10 */}

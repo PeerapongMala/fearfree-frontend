@@ -24,19 +24,15 @@ export const gameService = {
     return response.data;
   },
 
-  getAnimalById: async (id: number): Promise<ApiResponse<Animal>> => {
-    const response = await apiClient.get(`/game/animals/${id}`);
-    return response.data;
-  },
-
   getStageProgress: async (animalId: number): Promise<ApiResponse<StageStatus[]>> => {
     const response = await apiClient.get(`/stages/animals/${animalId}/levels`);
     return response.data;
   },
 
+  // Game rules: no dedicated backend endpoint exists yet.
+  // Return sensible defaults until one is added.
   getGameRules: async (): Promise<ApiResponse<GameRules>> => {
-    const response = await apiClient.get("/game-configs");
-    return response.data;
+    return { data: { stage_duration_seconds: 30, coin_per_stage: 10 } };
   },
 
   getStageDetail: async (levelId: number): Promise<ApiResponse<StageDetail>> => {

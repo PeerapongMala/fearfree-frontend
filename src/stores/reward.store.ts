@@ -23,37 +23,9 @@ export const useRewardStore = create<RewardState>((set, get) => ({
       const res = await rewardService.getRewards();
       set({ rewards: res.data || [], isLoading: false });
     } catch (error) {
-      console.warn("Using Mock Data for Rewards", error);
-      toast.error("ไม่สามารถโหลดรางวัลได้ กำลังใช้ข้อมูลตัวอย่าง");
-      set({
-        rewards: [
-          {
-            id: 1,
-            name: "รับส่วนลด 10 บาท",
-            cost_coins: 30,
-            image_url: "https://placehold.co/100x100?text=IceCream",
-          },
-          {
-            id: 2,
-            name: "รับส่วนลด 15 บาท",
-            cost_coins: 30,
-            image_url: "https://placehold.co/100x100?text=BobaTea",
-          },
-          {
-            id: 3,
-            name: "รับส่วนลดค่าตั๋วเข้าชม 100 บาท",
-            cost_coins: 300,
-            image_url: "https://placehold.co/100x100?text=Zoo",
-          },
-          {
-            id: 4,
-            name: "รับส่วนลดค่าตั๋วเข้าชม 100 บาท",
-            cost_coins: 300,
-            image_url: "https://placehold.co/100x100?text=Cave",
-          },
-        ],
-        isLoading: false,
-      });
+      console.error("Error fetching rewards:", error);
+      toast.error("ไม่สามารถโหลดรางวัลได้");
+      set({ rewards: [], isLoading: false });
     }
   },
 

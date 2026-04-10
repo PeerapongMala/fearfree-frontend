@@ -32,12 +32,12 @@ export default function AssessmentQuestionsPage() {
   const handleSubmit = async () => {
     if (!user) {
       alert("ไม่พบข้อมูลผู้ใช้ กรุณา Login ใหม่");
+      router.push("/login-select");
       return;
     }
 
-    const success = await submitAnswers(user.id);
+    const success = await submitAnswers();
     if (success) {
-      // ไม่ต้องส่ง query param แล้ว เพราะผลลัพธ์อยู่ใน store
       router.push("/assessment/result");
     }
   };

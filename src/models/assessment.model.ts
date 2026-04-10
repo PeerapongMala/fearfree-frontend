@@ -13,7 +13,6 @@ export interface AssessmentAnswer {
 }
 
 export interface AssessmentSubmitPayload {
-  user_id: number;
   answers: AssessmentAnswer[];
 }
 

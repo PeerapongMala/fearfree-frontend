@@ -130,15 +130,10 @@ function CategoryCard({
     >
       {/* ใช้ field cname จาก DB */}
       <span className="text-2xl md:text-3xl font-bold text-[#0D3B66] whitespace-pre-line leading-relaxed">
-        {category.cname}
+        {category.name}
       </span>
 
-      {/* แสดง Badge เฉพาะเมื่อ Backend ส่ง is_recommended = true มา */}
-      {category.is_recommended && (
-        <div className="absolute -top-3 -right-3 w-10 h-10 bg-[#007bff] rounded-full border-2 border-white flex items-center justify-center shadow-md animate-bounce z-10">
-          <span className="text-white font-bold text-lg">B</span>
-        </div>
-      )}
+      {/* Badge placeholder — add is_recommended to backend model to enable */}
     </motion.button>
   );
 }

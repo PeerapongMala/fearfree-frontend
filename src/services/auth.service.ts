@@ -4,12 +4,12 @@ import { UserProfile } from "@/models/user.model";
 
 interface LoginData {
   username: string;
-  password?: string;
+  password: string;
 }
 
 interface RegisterData {
   username: string;
-  password?: string;
+  password: string;
   email?: string;
   full_name?: string;
   age?: number;
@@ -34,13 +34,15 @@ export const authService = {
     return response.data;
   },
 
+  // Patient login uses the same /auth/login endpoint.
+  // The doctor-generated code serves as both username and password.
   patientLogin: async (code: string) => {
     const response = await apiClient.post<{
       message: string;
       token: string;
       refresh_token: string;
       user: UserProfile;
-    }>("/auth/patient-login", { code });
+    }>("/auth/login", { username: code, password: code });
     return response.data;
   },
 

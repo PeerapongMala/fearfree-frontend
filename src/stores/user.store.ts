@@ -6,7 +6,6 @@ import {
   MyPlayHistoryItem,
 } from "@/models/user.model";
 import { userService } from "@/services/user.service";
-import { useAuthStore } from "@/stores/auth.store";
 import toast from "react-hot-toast";
 
 interface UserState {
@@ -35,92 +34,33 @@ export const useUserStore = create<UserState>((set) => ({
       const res = await userService.getProfile();
       set({ profile: res.data, isLoading: false });
     } catch (error) {
-      console.warn("Using Mock Data for Profile", error);
-      toast.error("ไม่สามารถโหลดโปรไฟล์ได้ กำลังใช้ข้อมูลตัวอย่าง");
-      const currentUser = useAuthStore.getState().user;
-      const isDoctor = currentUser?.role === "doctor";
-      set({
-        profile: isDoctor
-          ? {
-              id: 1,
-              role: "doctor",
-              full_name: "ดร. พีระพงษ์ มาลา",
-              email: "doc@hospital.com",
-              hospital_name: "รพ.มหาราชนครเชียงใหม่",
-            }
-          : {
-              id: 2,
-              role: "patient",
-              full_name: "พีระพงษ์ มาลา",
-              email: "johndoe@gmail.com",
-              age: 19,
-              coins: 30,
-              hospital_name: "รพ.มหาราชนครเชียงใหม่",
-              most_fear_animal: "งู",
-              fear_percentage: 60,
-              fear_level_text: "ปานกลาง",
-            },
-        isLoading: false,
-      });
+      console.error("Error fetching profile:", error);
+      toast.error("ไม่สามารถโหลดโปรไฟล์ได้");
+      set({ profile: null, isLoading: false });
     }
   },
 
-  // ✅ Implementation: ประวัติการแลกรางวัล
   fetchRedemptionHistory: async () => {
     set({ isLoading: true });
     try {
       const res = await userService.getRedemptionHistory();
-      set({ redemptionHistory: res.data, isLoading: false });
+      set({ redemptionHistory: res.data || [], isLoading: false });
     } catch (error) {
-      console.warn("Using Mock Data for Redemption History", error);
-      toast.error("ไม่สามารถโหลดประวัติการแลกรางวัลได้ กำลังใช้ข้อมูลตัวอย่าง");
-      set({
-        redemptionHistory: [
-          {
-            id: 1,
-            date: "14 Aug 2025",
-            reward_name: "ส่วนลดค่ารักษา 10%",
-            coins_used: 30,
-            status: "success",
-          },
-          {
-            id: 2,
-            date: "14 Aug 2025",
-            reward_name: "ตุ๊กตาพี่หมอ",
-            coins_used: 50,
-            status: "success",
-          },
-          {
-            id: 3,
-            date: "10 Aug 2025",
-            reward_name: "คูปอง Starbucks",
-            coins_used: 30,
-            status: "success",
-          },
-        ],
-        isLoading: false,
-      });
+      console.error("Error fetching redemption history:", error);
+      toast.error("ไม่สามารถโหลดประวัติการแลกรางวัลได้");
+      set({ redemptionHistory: [], isLoading: false });
     }
   },
 
-  // ✅ Implementation: ประวัติการเล่น
   fetchMyPlayHistory: async () => {
     set({ isLoading: true });
     try {
       const res = await userService.getMyPlayHistory();
-      set({ myPlayHistory: res.data, isLoading: false });
+      set({ myPlayHistory: res.data || [], isLoading: false });
     } catch (error) {
-      console.warn("Using Mock Data for Play History", error);
-      toast.error("ไม่สามารถโหลดประวัติการเล่นได้ กำลังใช้ข้อมูลตัวอย่าง");
-      set({
-        myPlayHistory: [
-          { animal_name: "งู", progress_percent: 100 },
-          { animal_name: "แมว", progress_percent: 80 },
-          { animal_name: "มด", progress_percent: 40 },
-          { animal_name: "แมงมุม", progress_percent: 10 },
-        ],
-        isLoading: false,
-      });
+      console.error("Error fetching play history:", error);
+      toast.error("ไม่สามารถโหลดประวัติการเล่นได้");
+      set({ myPlayHistory: [], isLoading: false });
     }
   },
 }));

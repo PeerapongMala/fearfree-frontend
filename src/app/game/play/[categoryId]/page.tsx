@@ -26,7 +26,7 @@ export default function AnimalSelectionPage() {
 
   // หาชื่อหมวดหมู่ปัจจุบันมาโชว์หัวข้อ
   const currentCategoryName =
-    categories.find((c) => c.id === categoryId)?.cname || "เลือกสัตว์";
+    categories.find((c) => c.id === categoryId)?.name || "เลือกสัตว์";
 
   const hasFetchedCategories = useRef(false);
 
@@ -135,13 +135,9 @@ function AnimalCard({
       className="relative aspect-square w-full rounded-[2.5rem] shadow-lg flex items-center justify-center text-center p-6 bg-linear-to-b from-[#d1f0f0] to-[#b3e0e0] border border-white/60 group"
     >
       <span className="text-3xl font-bold text-[#0D3B66] tracking-wide">
-        {animal.aname}
+        {animal.name}
       </span>
-      {animal.is_recommended && (
-        <div className="absolute top-4 right-4 w-10 h-10 bg-[#007bff] rounded-full border-2 border-white flex items-center justify-center shadow-md animate-bounce z-10">
-          <span className="text-white font-bold text-lg">B</span>
-        </div>
-      )}
+      {/* Badge placeholder — add is_recommended to backend model to enable */}
     </motion.button>
   );
 }

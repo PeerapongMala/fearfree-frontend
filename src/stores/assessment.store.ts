@@ -12,7 +12,7 @@ interface AssessmentState {
 
   fetchQuestions: () => Promise<void>;
   setAnswer: (questionId: number, score: number) => void;
-  submitAnswers: (userId: number) => Promise<boolean>;
+  submitAnswers: () => Promise<boolean>;
 }
 
 export const useAssessmentStore = create<AssessmentState>((set, get) => ({
@@ -55,7 +55,7 @@ export const useAssessmentStore = create<AssessmentState>((set, get) => ({
     }));
   },
 
-  submitAnswers: async (userId: number) => {
+  submitAnswers: async () => {
     const { answers } = get();
     set({ isLoading: true, error: null });
 
@@ -65,9 +65,8 @@ export const useAssessmentStore = create<AssessmentState>((set, get) => ({
         score: score,
       }));
 
-      // ยิงไป Backend
+      // Backend derives user from JWT — no client-supplied user_id
       const response = await assessmentService.submitAssessment({
-        user_id: userId,
         answers: payloadAnswers,
       });
 

@@ -2,15 +2,18 @@
 
 export interface GameCategory {
   id: number;
-  cname: string;
-  is_recommended?: boolean;
+  name: string;
+  description?: string;
+  animals?: Animal[];
 }
 
 export interface Animal {
   id: number;
-  aname: string;
+  name: string;
   category_id: number;
-  is_recommended?: boolean;
+  description?: string;
+  thumbnail_url?: string;
+  stages?: StageStatus[];
 }
 
 export interface StageStatus {
