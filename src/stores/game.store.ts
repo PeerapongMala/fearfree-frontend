@@ -5,7 +5,6 @@ import {
   Animal,
   StageStatus,
   GameRules,
-  StageDetail,
   StageSubmissionResponse,
 } from "@/models/game.model";
 import { gameService } from "@/services/game.service";
@@ -16,7 +15,6 @@ interface GameState {
   currentAnimals: Animal[];
   selectedAnimal: Animal | null;
   stages: StageStatus[];
-  currentStageDetail: StageDetail | null;
   gameRules: GameRules | null;
   isLoading: boolean;
   error: string | null;
@@ -26,7 +24,6 @@ interface GameState {
   fetchAnimalsByCategory: (categoryId: number) => Promise<void>;
   fetchAnimalAndStages: (animalId: number) => Promise<void>;
   fetchGameRules: () => Promise<void>;
-  fetchStageDetail: (stageId: number) => Promise<void>;
 
   // ✅ [แก้ไข] เปลี่ยน Return Type เป็น Promise<StageSubmissionResponse | null>
   // เพื่อส่งข้อมูลเหรียญและด่านถัดไปคืนให้หน้าเว็บ
@@ -45,7 +42,6 @@ export const useGameStore = create<GameState>((set, get) => ({
   currentAnimals: [],
   selectedAnimal: null,
   stages: [],
-  currentStageDetail: null,
   gameRules: null,
   isLoading: false,
   error: null,
@@ -100,17 +96,6 @@ export const useGameStore = create<GameState>((set, get) => ({
       set({ error: "ไม่สามารถโหลดกฎเกมได้", isLoading: false });
     }
   },
-  fetchStageDetail: async (stageId) => {
-    set({ isLoading: true, error: null, currentStageDetail: null });
-    try {
-      const res = await gameService.getStageDetail(stageId);
-      set({ currentStageDetail: res.data, isLoading: false });
-    } catch (err: unknown) {
-      console.error("Error fetching stage detail:", err);
-      set({ error: "ไม่สามารถโหลดรายละเอียดด่านได้", isLoading: false });
-    }
-  },
-
   // ✅ [แก้ไข implementation]
   submitStage: async (stageId: number, isSuccess: boolean, note?: string) => {
     try {

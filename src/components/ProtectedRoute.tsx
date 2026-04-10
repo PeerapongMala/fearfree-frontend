@@ -16,7 +16,7 @@ export default function ProtectedRoute({
   allowedRoles,
 }: ProtectedRouteProps) {
   const router = useRouter();
-  const { user } = useAuthStore();
+  const { user, token, logout } = useAuthStore();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -31,10 +31,17 @@ export default function ProtectedRoute({
       return;
     }
 
+    // User restored from sessionStorage but token was not persisted — stale session
+    if (!token) {
+      logout();
+      router.replace("/login-select");
+      return;
+    }
+
     if (allowedRoles && !allowedRoles.includes(user.role)) {
       router.replace("/login-select");
     }
-  }, [mounted, user, allowedRoles, router]);
+  }, [mounted, user, token, allowedRoles, router, logout]);
 
   // Prevent flash of protected content during SSR hydration
   if (!mounted) {
@@ -45,7 +52,7 @@ export default function ProtectedRoute({
     );
   }
 
-  if (!user) return null;
+  if (!user || !token) return null;
   if (allowedRoles && !allowedRoles.includes(user.role)) return null;
 
   return <>{children}</>;

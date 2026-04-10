@@ -34,11 +34,6 @@ export const doctorService = {
     return response.data;
   },
 
-  getPatientById: async (patientId: number) => {
-    const response = await apiClient.get<{ data: Patient }>(`/doctor/patients/${patientId}`);
-    return response.data;
-  },
-
   getPatientRedemptions: async (patientId: number) => {
     const response = await apiClient.get<{ data: PatientRedemptionHistoryResponse }>(`/doctor/patients/${patientId}/redemptions`);
     return response.data;

@@ -5,7 +5,6 @@ import {
   Animal,
   StageStatus,
   GameRules,
-  StageDetail,
   StageSubmissionResponse,
 } from "@/models/game.model";
 
@@ -33,11 +32,6 @@ export const gameService = {
   // Return sensible defaults until one is added.
   getGameRules: async (): Promise<ApiResponse<GameRules>> => {
     return { data: { stage_duration_seconds: 30, coin_per_stage: 10 } };
-  },
-
-  getStageDetail: async (levelId: number): Promise<ApiResponse<StageDetail>> => {
-    const response = await apiClient.get(`/stages/levels/${levelId}`);
-    return response.data;
   },
 
   submitStageResult: async (

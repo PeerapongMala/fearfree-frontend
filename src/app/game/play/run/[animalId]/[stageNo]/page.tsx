@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter, useParams } from "next/navigation";
-import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Clock, Loader2, Star } from "lucide-react";
 import Navbar from "@/components/Navbar";
@@ -32,10 +31,8 @@ function GameRunner({
 
   const { user } = useAuthStore();
   const {
-    currentStageDetail,
     isLoading,
     fetchGameRules,
-    fetchStageDetail,
     submitStage,
     stages,
   } = useGameStore();
@@ -73,7 +70,7 @@ function GameRunner({
   const handleStartGame = async () => {
     setGameState("playing");
     if (stageId) {
-      await Promise.all([fetchGameRules(), fetchStageDetail(stageId)]);
+      await fetchGameRules();
       // Read from store after state has settled
       const rules = useGameStore.getState().gameRules;
       if (rules?.stage_duration_seconds) {
@@ -241,24 +238,11 @@ function GameRunner({
             {isLoading ? (
               <div className="flex flex-col items-center gap-2">
                 <Loader2 className="animate-spin text-[#0D3B66]" size={48} />
-                <p className="text-[#0D3B66]">กำลังโหลดรูปภาพ...</p>
-              </div>
-            ) : currentStageDetail ? (
-              <div className="relative w-full h-[250px] md:h-[350px]">
-                <Image
-                  src={
-                    currentStageDetail.media_url ||
-                    "https://placehold.co/600x400?text=Snake"
-                  }
-                  alt="Stage Media"
-                  fill
-                  className="object-contain rounded-xl blur-sm transition-all duration-1000 hover:blur-none"
-                  unoptimized
-                />
+                <p className="text-[#0D3B66]">กำลังโหลด...</p>
               </div>
             ) : (
               <div className="text-gray-400 flex flex-col items-center">
-                <p>ไม่พบข้อมูลรูปภาพ (Mock Mode)</p>
+                <p className="text-[#0D3B66] text-lg font-medium">ด่านที่ {stageNo}</p>
                 {stageId === 0 && (
                   <p className="text-xs mt-2 text-red-400">
                     *ไม่พบข้อมูล Stage ID

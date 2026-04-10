@@ -115,8 +115,28 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     set({ isLoading: true });
     try {
       const res = await gameService.getCategories();
-      // Backend returns nested categories with animals/stages when preloaded
-      set({ categories: (res.data || []) as AdminCategoryWithHierarchy[], isLoading: false });
+      const flatCategories = res.data || [];
+
+      // getCategories returns categories WITHOUT animals preloaded.
+      // Fetch animals for each category in parallel, then merge into hierarchy.
+      const categoriesWithAnimals: AdminCategoryWithHierarchy[] = await Promise.all(
+        flatCategories.map(async (cat) => {
+          try {
+            const animalsRes = await gameService.getAnimalsByCategory(cat.id);
+            const animals = (animalsRes.data || []).map((a) => ({
+              id: a.id,
+              name: a.name,
+              description: a.description,
+              thumbnail_url: a.thumbnail_url,
+            }));
+            return { ...cat, animals };
+          } catch {
+            return { ...cat, animals: [] };
+          }
+        })
+      );
+
+      set({ categories: categoriesWithAnimals, isLoading: false });
     } catch (err: unknown) {
       console.error(err);
       toast.error("ดึงข้อมูลโครงสร้างเกมไม่สำเร็จ");
