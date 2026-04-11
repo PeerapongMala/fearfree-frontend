@@ -1,5 +1,5 @@
 // src/services/auth.service.ts
-import apiClient from "@/services/apiClient";
+import apiClient from "@/lib/api-client";
 import { UserProfile } from "@/models/user.model";
 
 interface LoginData {

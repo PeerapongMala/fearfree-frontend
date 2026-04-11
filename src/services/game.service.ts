@@ -1,5 +1,5 @@
 // src/services/game.service.ts
-import apiClient from "@/services/apiClient";
+import apiClient from "@/lib/api-client";
 import {
   GameCategory,
   Animal,
@@ -7,10 +7,7 @@ import {
   GameRules,
   StageSubmissionResponse,
 } from "@/models/game.model";
-
-interface ApiResponse<T> {
-  data: T;
-}
+import { ApiResponse } from "@/models/shared.types";
 
 export const gameService = {
   getCategories: async (): Promise<ApiResponse<GameCategory[]>> => {

@@ -1,5 +1,5 @@
 // src/services/reward.service.ts
-import apiClient from "@/services/apiClient";
+import apiClient from "@/lib/api-client";
 import { Reward, RedeemResponse } from "@/models/reward.model";
 
 export const rewardService = {

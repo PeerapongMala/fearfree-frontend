@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { HeartHandshake } from "lucide-react";
-import { cn } from "@/utils/cn";
+import { cn } from "@/lib/cn";
 import { useAuthStore } from "@/stores/auth.store";
 import toast from "react-hot-toast";
 

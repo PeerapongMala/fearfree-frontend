@@ -1,7 +1,7 @@
 "use client";
 
 import { FileEdit, SlidersHorizontal, ClipboardList } from "lucide-react";
-import { cn } from "@/utils/cn";
+import { cn } from "@/lib/cn";
 
 interface AssessmentStepperProps {
   currentStep: 1 | 2 | 3;

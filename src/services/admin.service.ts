@@ -1,5 +1,5 @@
 // src/services/admin.service.ts
-import apiClient from "@/services/apiClient";
+import apiClient from "@/lib/api-client";
 import {
   AdminReward,
   AdminRewardInput,
