@@ -10,11 +10,14 @@ export const assessmentService = {
 
   submitAssessment: async (payload: AssessmentSubmitPayload) => {
     const response = await apiClient.post<{
+      success: boolean;
       message?: string;
-      fear_level: string;
-      percent: number;
-      description?: string;
+      data: {
+        fear_level: string;
+        percent: number;
+        description?: string;
+      };
     }>("/assessments/results", payload);
-    return response.data;
+    return response.data.data;
   },
 };
