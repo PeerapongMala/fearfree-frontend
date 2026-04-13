@@ -5,23 +5,20 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Eye,
-  EyeOff,
   ArrowLeft,
   HeartHandshake,
   AlertCircle,
   CheckCircle,
 } from "lucide-react";
 // 1. Import Store
-import { useAuthStore } from "@/stores/auth.store";
-import { authService } from "@/services/auth.service";
+import { useAuthStore, authService } from "@/features/auth";
+import { Button, Input } from "@/shared/components/ui";
 
 export default function LoginPage() {
   const router = useRouter();
   // 2. ดึงฟังก์ชัน login จาก Store
   const { login } = useAuthStore();
 
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -71,9 +68,6 @@ export default function LoginPage() {
     }
   };
 
-  const inputBorderClass = error
-    ? "border-red-500 focus:ring-red-200"
-    : "border-gray-300 focus:ring-primary/50";
 
   return (
     // ... (ส่วน JSX เหมือนเดิมเป๊ะ ไม่ต้องแก้ครับ)
@@ -127,47 +121,29 @@ export default function LoginPage() {
 
         <form onSubmit={handleLogin} className="space-y-6">
           {/* Username */}
-          <div className="space-y-2">
-            <label className="text-[#0D3B66] font-bold text-sm">
-              ชื่อผู้ใช้งาน<span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              placeholder="ชื่อผู้ใช้งาน"
-              className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 text-gray-700 bg-white transition-all ${inputBorderClass}`}
-              value={formData.username}
-              onChange={(e) => {
-                setFormData({ ...formData, username: e.target.value });
-                setError("");
-              }}
-            />
-          </div>
+          <Input
+            label="ชื่อผู้ใช้งาน *"
+            placeholder="ชื่อผู้ใช้งาน"
+            error={!!error}
+            value={formData.username}
+            onChange={(e) => {
+              setFormData({ ...formData, username: e.target.value });
+              setError("");
+            }}
+          />
 
           {/* Password */}
-          <div className="space-y-2">
-            <label className="text-[#0D3B66] font-bold text-sm">
-              รหัสผ่าน<span className="text-red-500">*</span>
-            </label>
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="รหัสผ่าน"
-                className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 text-gray-700 bg-white pr-12 transition-all ${inputBorderClass}`}
-                value={formData.password}
-                onChange={(e) => {
-                  setFormData({ ...formData, password: e.target.value });
-                  setError("");
-                }}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#0D3B66]"
-              >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
-          </div>
+          <Input
+            label="รหัสผ่าน *"
+            isPassword
+            placeholder="รหัสผ่าน"
+            error={!!error}
+            value={formData.password}
+            onChange={(e) => {
+              setFormData({ ...formData, password: e.target.value });
+              setError("");
+            }}
+          />
 
           {/* Error */}
           {error && (
@@ -198,13 +174,9 @@ export default function LoginPage() {
           </div>
 
           {/* Submit */}
-          <button
-            type="submit"
-            disabled={!!success}
-            className="w-full bg-[#D9886A] hover:bg-[#c5765a] text-white text-lg font-bold py-3 rounded-full shadow-lg transition-transform active:scale-95 mt-4 disabled:opacity-70 disabled:cursor-wait"
-          >
+          <Button type="submit" pill fullWidth disabled={!!success} className="text-lg mt-4">
             {success ? "กำลังเข้าสู่ระบบ..." : "เข้าสู่ระบบ"}
-          </button>
+          </Button>
         </form>
       </motion.div>
 

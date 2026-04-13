@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Mail, ArrowLeft, HeartHandshake } from "lucide-react";
 import toast from "react-hot-toast";
+import { Button } from "@/shared/components/ui";
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
@@ -70,12 +71,9 @@ export default function ForgotPasswordPage() {
             </div>
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-[#D9886A] hover:bg-[#c5765a] text-white text-lg font-bold py-3 rounded-full shadow-lg transition-transform active:scale-95"
-          >
+          <Button type="submit" pill fullWidth className="text-lg">
             ยืนยัน
-          </button>
+          </Button>
         </form>
       </motion.div>
 

@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { Users, Package, Gamepad2, TrendingUp } from "lucide-react";
-import { adminService } from "@/services/admin.service";
+import { adminService } from "@/features/admin";
 import Link from "next/link";
+import { Card } from "@/shared/components/ui";
 
 export default function AdminDashboardPage() {
   const [stats, setStats] = useState({
@@ -30,7 +31,7 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 flex justify-between items-center relative overflow-hidden">
+      <Card className="flex justify-between items-center relative overflow-hidden">
         {/* Decorative Circles */}
         <div className="absolute -top-10 -right-10 w-40 h-40 bg-teal-50 rounded-full blur-2xl"></div>
         <div className="absolute -bottom-10 right-20 w-32 h-32 bg-orange-50 rounded-full blur-2xl"></div>
@@ -43,11 +44,11 @@ export default function AdminDashboardPage() {
             ดูภาพรวม จัดการข้อมูลเกม และของรางวัลสำหรับผู้ป่วย
           </p>
         </div>
-      </div>
+      </Card>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+        <Card padding="md" className="flex items-center gap-4 rounded-2xl">
           <div className="p-4 bg-blue-50 text-blue-600 rounded-xl">
             <Users size={24} />
           </div>
@@ -55,9 +56,9 @@ export default function AdminDashboardPage() {
             <p className="text-gray-500 text-sm font-medium">ผู้ป่วยทั้งหมด</p>
             <h3 className="text-2xl font-bold text-[#0D3B66]">-</h3>
           </div>
-        </div>
+        </Card>
 
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+        <Card padding="md" className="flex items-center gap-4 rounded-2xl">
           <div className="p-4 bg-orange-50 text-orange-600 rounded-xl">
             <Package size={24} />
           </div>
@@ -67,9 +68,9 @@ export default function AdminDashboardPage() {
               {stats.totalRewards} รายการ
             </h3>
           </div>
-        </div>
+        </Card>
 
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+        <Card padding="md" className="flex items-center gap-4 rounded-2xl">
           <div className="p-4 bg-teal-50 text-teal-600 rounded-xl">
             <Gamepad2 size={24} />
           </div>
@@ -77,9 +78,9 @@ export default function AdminDashboardPage() {
             <p className="text-gray-500 text-sm font-medium">เกมทั้งหมด</p>
             <h3 className="text-2xl font-bold text-[#0D3B66]">-</h3>
           </div>
-        </div>
+        </Card>
 
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+        <Card padding="md" className="flex items-center gap-4 rounded-2xl">
           <div className="p-4 bg-purple-50 text-purple-600 rounded-xl">
             <TrendingUp size={24} />
           </div>
@@ -87,7 +88,7 @@ export default function AdminDashboardPage() {
             <p className="text-gray-500 text-sm font-medium">การแลกของรางวัล</p>
             <h3 className="text-2xl font-bold text-[#0D3B66]">-</h3>
           </div>
-        </div>
+        </Card>
       </div>
 
       {/* Quick Actions */}

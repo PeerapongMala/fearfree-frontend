@@ -5,19 +5,17 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
-  Eye,
-  EyeOff,
   ArrowLeft,
   HeartHandshake,
   AlertCircle,
 } from "lucide-react";
-import { authService } from "@/services/auth.service";
+import { authService } from "@/features/auth";
 import toast from "react-hot-toast";
+import { Button, Input } from "@/shared/components/ui";
 
 export default function RegisterPage() {
   const router = useRouter();
 
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
   const [formData, setFormData] = useState({
@@ -80,12 +78,6 @@ export default function RegisterPage() {
     }
   };
 
-  const inputClass = (isError: boolean) =>
-    `w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 text-gray-700 bg-white transition-all ${
-      isError
-        ? "border-red-500 focus:ring-red-200"
-        : "border-gray-300 focus:ring-primary/50"
-    }`;
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-linear-to-b from-teal-50 to-teal-100 p-4">
@@ -113,83 +105,53 @@ export default function RegisterPage() {
         </div>
 
         <form onSubmit={handleRegister} className="space-y-4">
-          <div className="space-y-1">
-            <label className="text-[#0D3B66] font-bold text-sm">
-              ชื่อ-สกุล
-            </label>
-            <input
-              type="text"
-              placeholder="ชื่อ-สกุล"
-              className={inputClass(false)}
-              value={formData.fullName}
-              onChange={(e) =>
-                setFormData({ ...formData, fullName: e.target.value })
-              }
-            />
-          </div>
+          <Input
+            label="ชื่อ-สกุล"
+            placeholder="ชื่อ-สกุล"
+            value={formData.fullName}
+            onChange={(e) =>
+              setFormData({ ...formData, fullName: e.target.value })
+            }
+          />
 
-          <div className="space-y-1">
-            <label className="text-[#0D3B66] font-bold text-sm">
-              อีเมล<span className="text-red-500">*</span>
-            </label>
-            <input
-              type="email"
-              placeholder="example@gmail.com"
-              className={inputClass(!!error && !validateEmail(formData.email))}
-              value={formData.email}
-              onChange={(e) => {
-                setFormData({ ...formData, email: e.target.value });
-                setError("");
-              }}
-            />
-          </div>
+          <Input
+            label="อีเมล *"
+            type="email"
+            placeholder="example@gmail.com"
+            error={!!error && !validateEmail(formData.email)}
+            value={formData.email}
+            onChange={(e) => {
+              setFormData({ ...formData, email: e.target.value });
+              setError("");
+            }}
+          />
 
-          <div className="space-y-1">
-            <label className="text-[#0D3B66] font-bold text-sm">
-              ชื่อผู้ใช้งาน<span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              placeholder="ชื่อผู้ใช้งาน"
-              className={inputClass(
-                !!error &&
-                  formData.username.length > 0 &&
-                  formData.username.length < 6
-              )}
-              value={formData.username}
-              onChange={(e) => {
-                setFormData({ ...formData, username: e.target.value });
-                setError("");
-              }}
-            />
-          </div>
+          <Input
+            label="ชื่อผู้ใช้งาน *"
+            placeholder="ชื่อผู้ใช้งาน"
+            error={
+              !!error &&
+              formData.username.length > 0 &&
+              formData.username.length < 6
+            }
+            value={formData.username}
+            onChange={(e) => {
+              setFormData({ ...formData, username: e.target.value });
+              setError("");
+            }}
+          />
 
-          <div className="space-y-1">
-            <label className="text-[#0D3B66] font-bold text-sm">
-              รหัสผ่าน<span className="text-red-500">*</span>
-            </label>
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="รหัสผ่าน"
-                className={`${inputClass(
-                  !!error && formData.password.length < 8
-                )} pr-12`}
-                value={formData.password}
-                onChange={(e) => {
-                  setFormData({ ...formData, password: e.target.value });
-                  setError("");
-                }}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#0D3B66]"
-              >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
-          </div>
+          <Input
+            label="รหัสผ่าน *"
+            isPassword
+            placeholder="รหัสผ่าน"
+            error={!!error && formData.password.length < 8}
+            value={formData.password}
+            onChange={(e) => {
+              setFormData({ ...formData, password: e.target.value });
+              setError("");
+            }}
+          />
 
           {error && (
             <motion.div
@@ -202,12 +164,9 @@ export default function RegisterPage() {
             </motion.div>
           )}
 
-          <button
-            type="submit"
-            className="w-full bg-[#D9886A] hover:bg-[#c5765a] text-white text-lg font-bold py-3 rounded-full shadow-lg transition-transform active:scale-95 mt-6"
-          >
+          <Button type="submit" pill fullWidth className="text-lg mt-6">
             สมัครสมาชิก
-          </button>
+          </Button>
         </form>
       </motion.div>
 

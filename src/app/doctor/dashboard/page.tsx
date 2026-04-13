@@ -2,20 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import {
   LogOut,
   Eye,
   FileText,
-  Edit,
   Trash2,
-  ChevronLeft,
-  ChevronRight,
   UserPlus,
   Gift,
 } from "lucide-react";
-import { useAuthStore } from "@/stores/auth.store";
-import { useDoctorStore } from "@/stores/doctor.store";
+import { useAuthStore } from "@/features/auth";
+import { useDoctorStore } from "@/features/doctor";
+import toast from "react-hot-toast";
+import { Button, Card, ConfirmDialog, useConfirmDialog } from "@/shared/components/ui";
 
 export default function DoctorDashboard() {
   const router = useRouter();
@@ -33,6 +31,7 @@ export default function DoctorDashboard() {
   const [newFear, setNewFear] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const { dialog, showConfirm, closeDialog } = useConfirmDialog();
 
   useEffect(() => {
     setMounted(true);
@@ -40,7 +39,6 @@ export default function DoctorDashboard() {
 
   useEffect(() => {
     if (!mounted) return;
-    // เช็คสิทธิ์: ถ้าไม่ใช่หมอ ให้เด้งออก
     if (!user || user.role !== "doctor") {
       router.push("/login");
       return;
@@ -56,7 +54,10 @@ export default function DoctorDashboard() {
   };
 
   const handleCreate = async () => {
-    if (!newName || !newFear) return alert("กรุณากรอกข้อมูลให้ครบ");
+    if (!newName || !newFear) {
+      toast.error("กรุณากรอกข้อมูลให้ครบ");
+      return;
+    }
 
     setIsCreating(true);
     const success = await createPatient({
@@ -67,21 +68,30 @@ export default function DoctorDashboard() {
     if (success) {
       setNewName("");
       setNewFear("");
-      alert("สร้างผู้ป่วยสำเร็จ!");
+      toast.success("สร้างผู้ป่วยสำเร็จ!");
     } else {
-      alert("สร้างผู้ป่วยล้มเหลว (ลองใหม่อีกครั้ง หรือเช็ค Backend)");
+      toast.error("สร้างผู้ป่วยล้มเหลว (ลองใหม่อีกครั้ง หรือเช็ค Backend)");
     }
     setIsCreating(false);
   };
 
   const handleDelete = async (id: number) => {
-    if (confirm("ยืนยันการลบผู้ป่วยรายนี้?")) {
-      await deletePatient(id);
-    }
+    showConfirm({
+      title: "ยืนยันการลบ",
+      message: "ยืนยันการลบผู้ป่วยรายนี้?",
+      onConfirm: () => deletePatient(id),
+    });
   };
 
   return (
     <div className="min-h-screen bg-linear-to-b from-[#E6F4F1] to-[#CDE8E5] font-sans">
+      <ConfirmDialog
+        isOpen={dialog.isOpen}
+        title={dialog.title}
+        message={dialog.message}
+        onConfirm={dialog.onConfirm}
+        onClose={closeDialog}
+      />
       {/* 1. Header (Navbar เฉพาะของหมอ ตามรูป) */}
       <header className="bg-white/80 backdrop-blur-md px-6 py-4 shadow-sm flex justify-between items-center sticky top-0 z-50">
         <div className="flex items-center gap-2">
@@ -103,7 +113,7 @@ export default function DoctorDashboard() {
         {/* 2. Top Section: Profile Card & Recent Codes */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Left Card: Create Patient */}
-          <div className="bg-white rounded-3xl p-8 shadow-md flex flex-col justify-between relative overflow-hidden">
+          <Card className="shadow-md flex flex-col justify-between relative overflow-hidden">
             {/* Badge ตัว B (Decoration) */}
             <div className="absolute top-0 right-0 p-4">
               <div className="w-10 h-10 bg-[#007bff] rounded-full border-2 border-white flex items-center justify-center shadow-md text-white font-bold">
@@ -136,19 +146,18 @@ export default function DoctorDashboard() {
             </div>
 
             <div className="mt-6 flex justify-end">
-              <button
+              <Button
                 onClick={handleCreate}
                 disabled={isCreating}
-                className="bg-[#D9886A] hover:bg-[#c5765a] text-white font-bold py-3 px-8 rounded-lg shadow-lg flex items-center gap-2 transition-all hover:scale-105 active:scale-95"
+                icon={<UserPlus size={20} />}
               >
-                {isCreating ? "กำลังสร้าง..." : "สร้างผู้ป่วยใหม่"}{" "}
-                <UserPlus size={20} />
-              </button>
+                {isCreating ? "กำลังสร้าง..." : "สร้างผู้ป่วยใหม่"}
+              </Button>
             </div>
-          </div>
+          </Card>
 
           {/* Right Card: Recent Codes */}
-          <div className="bg-white rounded-3xl p-8 shadow-md relative overflow-hidden">
+          <Card className="shadow-md relative overflow-hidden">
             <div className="absolute top-0 right-0 p-4">
               <div className="w-10 h-10 bg-[#007bff] rounded-full border-2 border-white flex items-center justify-center shadow-md text-white font-bold">
                 B
@@ -178,11 +187,11 @@ export default function DoctorDashboard() {
                 <p className="text-gray-400 text-sm">ยังไม่มีรายการล่าสุด</p>
               )}
             </div>
-          </div>
+          </Card>
         </div>
 
         {/* 3. Bottom Section: Patient Table */}
-        <div className="bg-white rounded-3xl p-8 shadow-md relative min-h-[500px]">
+        <Card className="shadow-md relative min-h-[500px]">
           <div className="absolute -top-4 left-8">
             <div className="w-12 h-12 bg-[#007bff] rounded-full border-4 border-[#E6F4F1] flex items-center justify-center shadow-md text-white font-bold text-xl z-10">
               B
@@ -275,19 +284,7 @@ export default function DoctorDashboard() {
             )}
           </div>
 
-          {/* Pagination (Mock) */}
-          <div className="flex justify-end items-center gap-4 mt-8 text-gray-500">
-            <button className="p-2 hover:text-[#0D3B66]">
-              <ChevronLeft />
-            </button>
-            <div className="w-8 h-8 bg-[#D9886A] text-white rounded-full flex items-center justify-center font-bold text-sm">
-              1
-            </div>
-            <button className="p-2 hover:text-[#0D3B66]">
-              <ChevronRight />
-            </button>
-          </div>
-        </div>
+        </Card>
       </main>
     </div>
   );

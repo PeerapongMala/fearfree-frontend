@@ -1,6 +1,6 @@
 "use client";
 
-import Navbar from "@/components/Navbar";
+import Navbar from "@/shared/components/Navbar";
 import Link from "next/link";
 import { motion } from "framer-motion";
 

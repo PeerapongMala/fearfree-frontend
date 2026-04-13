@@ -10,8 +10,7 @@ import {
   AlertCircle,
   CheckCircle,
 } from "lucide-react";
-import { useAuthStore } from "@/stores/auth.store";
-import { authService } from "@/services/auth.service";
+import { useAuthStore, authService } from "@/features/auth";
 
 export default function PatientLoginPage() {
   const router = useRouter();

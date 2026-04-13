@@ -1,9 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Navbar from "@/components/Navbar";
-import AssessmentStepper from "@/components/AssessmentStepper";
-import { useAssessmentStore } from "@/stores/assessment.store";
+import Navbar from "@/shared/components/Navbar";
+import { AssessmentStepper, useAssessmentStore } from "@/features/assessment";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 

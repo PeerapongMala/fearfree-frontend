@@ -2,15 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { Plus, Edit, Trash2, CheckCircle, Package } from "lucide-react";
-import { useAdminStore } from "@/stores/admin.store";
-import { AdminReward, AdminRewardInput } from "@/models/admin.model";
+import { useAdminStore } from "@/features/admin";
+import type { AdminReward, AdminRewardInput } from "@/features/admin";
+import { Button, Input, Textarea, Card, ConfirmDialog, useConfirmDialog } from "@/shared/components/ui";
 
 export default function AdminRewardsPage() {
-  const { rewards, isLoading, fetchRewards, createReward, updateReward, deleteReward } =
+  const { rewards, isFetching, isSubmitting, fetchRewards, createReward, updateReward, deleteReward } =
     useAdminStore();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
+
+  const { dialog, showConfirm, closeDialog } = useConfirmDialog();
 
   const [formData, setFormData] = useState<AdminRewardInput>({
     name: "",
@@ -67,30 +70,35 @@ export default function AdminRewardsPage() {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (confirm("ยืนยันการลบของรางวัลชิ้นนี้? ประวัติการแลกอาจได้รับผลกระทบ")) {
-      await deleteReward(id);
-    }
+  const handleDelete = (id: number) => {
+    showConfirm({
+      title: "ยืนยันการลบ",
+      message: "ยืนยันการลบของรางวัลชิ้นนี้? ประวัติการแลกอาจได้รับผลกระทบ",
+      onConfirm: () => deleteReward(id),
+    });
   };
 
   return (
     <>
+      <ConfirmDialog
+        isOpen={dialog.isOpen}
+        title={dialog.title}
+        message={dialog.message}
+        onConfirm={dialog.onConfirm}
+        onClose={closeDialog}
+      />
       <div className="flex justify-between items-end mb-8">
         <div>
           <h1 className="text-[#0D3B66] font-bold text-3xl">จัดการของรางวัล</h1>
           <p className="text-gray-500 mt-2">เพิ่ม / ลบ / แก้ไข ของรางวัลในระบบ</p>
         </div>
-        <button
-          onClick={openAddModal}
-          className="bg-[#D9886A] hover:bg-[#c5765a] text-white font-bold py-3 px-6 rounded-xl shadow-lg flex items-center gap-2 transition-transform hover:scale-105"
-        >
-          <Plus size={20} />
+        <Button onClick={openAddModal} icon={<Plus size={20} />}>
           เพิ่มของรางวัล
-        </button>
+        </Button>
       </div>
 
-      <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 min-h-[500px]">
-        {isLoading ? (
+      <Card className="min-h-[500px]">
+        {isFetching ? (
           <div className="flex justify-center items-center h-64 text-[#0D3B66]">
             กำลังโหลดข้อมูล...
           </div>
@@ -114,7 +122,7 @@ export default function AdminRewardsPage() {
                     className="hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0"
                   >
                     <td className="p-4">
-                      {reward.image_url ? (
+                      {reward.image_url && /^https:\/\//i.test(reward.image_url) ? (
                         <img
                           src={reward.image_url}
                           alt={reward.name}
@@ -172,11 +180,11 @@ export default function AdminRewardsPage() {
             </table>
           </div>
         )}
-      </div>
+      </Card>
 
       {/* React Modal (Custom Simple) */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={closeModal}></div>
           <div className="relative bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl animate-in fade-in zoom-in-95 duration-200">
             <h2 className="text-[#0D3B66] font-bold text-2xl mb-6">
@@ -184,80 +192,61 @@ export default function AdminRewardsPage() {
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">ชื่อรางวัล</label>
-                <input
-                  type="text"
-                  required
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#0D3B66]/30 transition-all"
-                  placeholder="เช่น ตุ๊กตาหมีไซส์ M"
-                />
-              </div>
+              <Input
+                variant="filled"
+                label="ชื่อรางวัล"
+                required
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder="เช่น ตุ๊กตาหมีไซส์ M"
+              />
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">รายละเอียด</label>
-                <textarea
-                  required
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#0D3B66]/30 transition-all h-24 resize-none"
-                  placeholder="คำอธิบายเพิ่มเติม..."
-                />
-              </div>
+              <Textarea
+                variant="filled"
+                label="รายละเอียด"
+                required
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                placeholder="คำอธิบายเพิ่มเติม..."
+              />
 
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">จำนวนเหรียญที่ใช้</label>
-                  <input
-                    type="number"
-                    min="0"
-                    required
-                    value={formData.cost_coins}
-                    onChange={(e) => setFormData({ ...formData, cost_coins: Number(e.target.value) })}
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#0D3B66]/30 transition-all"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">จำนวนในสต็อก (ชิ้น)</label>
-                  <input
-                    type="number"
-                    min="0"
-                    required
-                    value={formData.stock}
-                    onChange={(e) => setFormData({ ...formData, stock: Number(e.target.value) })}
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#0D3B66]/30 transition-all"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">ลิงก์รูปภาพ (Image URL)</label>
-                <input
-                  type="url"
-                  value={formData.image_url}
-                  onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#0D3B66]/30 transition-all"
-                  placeholder="https://example.com/image.png"
+                <Input
+                  variant="filled"
+                  label="จำนวนเหรียญที่ใช้"
+                  type="number"
+                  min="0"
+                  required
+                  value={formData.cost_coins}
+                  onChange={(e) => setFormData({ ...formData, cost_coins: Number(e.target.value) })}
+                />
+                <Input
+                  variant="filled"
+                  label="จำนวนในสต็อก (ชิ้น)"
+                  type="number"
+                  min="0"
+                  required
+                  value={formData.stock}
+                  onChange={(e) => setFormData({ ...formData, stock: Number(e.target.value) })}
                 />
               </div>
 
+              <Input
+                variant="filled"
+                label="ลิงก์รูปภาพ (Image URL)"
+                type="url"
+                value={formData.image_url}
+                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                placeholder="https://example.com/image.png"
+              />
+
               <div className="flex justify-end gap-3 pt-4 mt-2 border-t border-gray-100">
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  className="px-6 py-3 rounded-xl font-medium text-gray-600 hover:bg-gray-100 transition-colors"
-                >
+                <Button variant="ghost" onClick={closeModal} type="button">
                   ยกเลิก
-                </button>
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="bg-[#0D3B66] hover:bg-[#1a4f82] text-white px-8 py-3 rounded-xl font-bold shadow-md transition-transform hover:scale-105 active:scale-95 disabled:opacity-70"
-                >
-                  {isLoading ? "กำลังบันทึก..." : "บันทึกข้อมูล"}
-                </button>
+                </Button>
+                <Button variant="secondary" type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? "กำลังบันทึก..." : "บันทึกข้อมูล"}
+                </Button>
               </div>
             </form>
           </div>

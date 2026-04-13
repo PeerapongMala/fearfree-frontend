@@ -2,9 +2,9 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Navbar from "@/components/Navbar";
-import { useGameStore } from "@/stores/game.store";
-import { GameCategory } from "@/models/game.model";
+import Navbar from "@/shared/components/Navbar";
+import { useGameStore } from "@/features/game";
+import type { GameCategory } from "@/features/game";
 import { motion } from "framer-motion";
 import { ArrowLeft, Loader2, AlertCircle } from "lucide-react";
 

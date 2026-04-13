@@ -14,9 +14,9 @@ import {
   LogOut,
   Loader2,
 } from "lucide-react";
-import Navbar from "@/components/Navbar";
-import { useAuthStore } from "@/stores/auth.store";
-import { useUserStore } from "@/stores/user.store";
+import Navbar from "@/shared/components/Navbar";
+import { useAuthStore } from "@/features/auth";
+import { useUserStore } from "@/features/user";
 
 export default function ProfilePage() {
   const router = useRouter();

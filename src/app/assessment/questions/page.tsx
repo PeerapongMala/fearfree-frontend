@@ -2,10 +2,11 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Navbar from "@/components/Navbar";
-import AssessmentStepper from "@/components/AssessmentStepper";
-import { useAssessmentStore } from "@/stores/assessment.store";
-import { useAuthStore } from "@/stores/auth.store"; // ดึง user id
+import Navbar from "@/shared/components/Navbar";
+import { AssessmentStepper, useAssessmentStore } from "@/features/assessment";
+import { useAuthStore } from "@/features/auth";
+import toast from "react-hot-toast";
+import { Button } from "@/shared/components/ui";
 import { motion } from "framer-motion";
 import { ArrowLeft, Loader2, AlertCircle } from "lucide-react";
 
@@ -31,7 +32,7 @@ export default function AssessmentQuestionsPage() {
 
   const handleSubmit = async () => {
     if (!user) {
-      alert("ไม่พบข้อมูลผู้ใช้ กรุณา Login ใหม่");
+      toast.error("ไม่พบข้อมูลผู้ใช้ กรุณา Login ใหม่");
       router.push("/login-select");
       return;
     }
@@ -134,12 +135,9 @@ export default function AssessmentQuestionsPage() {
           {/* ปุ่มเสร็จสิ้น */}
           {!isLoading && !error && questions.length > 0 && (
             <div className="mt-12 flex justify-center pb-20">
-              <button
-                onClick={handleSubmit}
-                className="bg-[#D9886A] hover:bg-[#c5765a] text-white text-xl font-bold py-3 px-16 rounded-full shadow-lg transition-transform hover:scale-105 active:scale-95 flex items-center gap-2"
-              >
+              <Button size="lg" pill onClick={handleSubmit}>
                 เสร็จสิ้น
-              </button>
+              </Button>
             </div>
           )}
         </motion.div>

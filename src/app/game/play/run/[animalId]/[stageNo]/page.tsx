@@ -4,17 +4,17 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Clock, Loader2, Star } from "lucide-react";
-import Navbar from "@/components/Navbar";
-import { useGameStore } from "@/stores/game.store";
-import { useAuthStore } from "@/stores/auth.store";
-// ✅ Import Interface
-import { StageSubmissionResponse } from "@/models/game.model";
+import Navbar from "@/shared/components/Navbar";
+import { useGameStore } from "@/features/game";
+import { useAuthStore } from "@/features/auth";
+import toast from "react-hot-toast";
+import type { StageSubmissionResponse } from "@/features/game";
 
 // --- [PART 1] Page Wrapper ---
 export default function GameplayPage() {
   const params = useParams();
-  const animalId = params?.animalId ? Number(params.animalId) : 0;
-  const stageNo = params?.stageNo ? Number(params.stageNo) : 0;
+  const animalId = params?.animalId ? parseInt(params.animalId as string, 10) || 0 : 0;
+  const stageNo = params?.stageNo ? parseInt(params.stageNo as string, 10) || 0 : 0;
 
   return <GameRunner key={stageNo} animalId={animalId} stageNo={stageNo} />;
 }
@@ -92,7 +92,7 @@ function GameRunner({
   // Submit Result Logic
   const handleSubmit = useCallback(async () => {
     if (!stageId) {
-      alert("ไม่พบข้อมูลด่าน ไม่สามารถบันทึกได้");
+      toast.error("ไม่พบข้อมูลด่าน ไม่สามารถบันทึกได้");
       return;
     }
 
@@ -108,7 +108,7 @@ function GameRunner({
       setRewardData(result);
       setShowSuccess(true);
     } else {
-      alert("เกิดข้อผิดพลาดในการบันทึกผล");
+      toast.error("เกิดข้อผิดพลาดในการบันทึกผล");
     }
   }, [stageId, user?.role, symptomNote, submitStage]);
 

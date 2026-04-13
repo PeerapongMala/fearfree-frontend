@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Navbar from "@/components/Navbar";
-import AssessmentStepper from "@/components/AssessmentStepper";
-import { userService } from "@/services/user.service";
-import { useAuthStore } from "@/stores/auth.store";
+import Navbar from "@/shared/components/Navbar";
+import { AssessmentStepper } from "@/features/assessment";
+import { userService } from "@/features/user";
+import { useAuthStore } from "@/features/auth";
 import { motion } from "framer-motion";
 import { ArrowLeft, AlertCircle } from "lucide-react";
+import { Button, Input } from "@/shared/components/ui";
 
 export default function AssessmentPage() {
   const router = useRouter();
@@ -80,12 +81,6 @@ export default function AssessmentPage() {
     }
   };
 
-  const inputClass = (isError: boolean) =>
-    `w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 text-lg text-gray-700 bg-white shadow-sm transition-all ${
-      isError
-        ? "border-red-500 focus:ring-red-200"
-        : "border-gray-300 focus:ring-[#0D3B66]"
-    }`;
 
   return (
     <div className="min-h-screen flex flex-col bg-linear-to-b from-teal-50 to-teal-100">
@@ -107,18 +102,18 @@ export default function AssessmentPage() {
               <label className="text-[#0D3B66] font-bold text-lg pl-1 block">
                 อายุ
               </label>
-              <input
-                type="text" // ใช้ text + inputMode numeric ดีกว่า type="number" เพราะคุม regex ง่ายกว่า
+              <Input
+                type="text"
                 inputMode="numeric"
-                placeholder=""
-                className={inputClass(
+                error={
                   !!error &&
-                    (formData.age === "" ||
-                      parseInt(formData.age) < 5 ||
-                      parseInt(formData.age) > 120)
-                )}
+                  (formData.age === "" ||
+                    parseInt(formData.age) < 5 ||
+                    parseInt(formData.age) > 120)
+                }
+                className="text-lg shadow-sm"
                 value={formData.age}
-                onChange={handleAgeChange} // ใช้ฟังก์ชันดักตัวเลขใหม่
+                onChange={handleAgeChange}
               />
             </div>
             <div className="pb-3">
@@ -132,12 +127,13 @@ export default function AssessmentPage() {
               <label className="text-[#0D3B66] font-bold text-lg pl-1 block">
                 กลัวสัตว์อะไรมากที่สุด
               </label>
-              <input
+              <Input
                 type="text"
                 placeholder="ระบุชื่อสัตว์ (ภาษาไทยหรืออังกฤษ)"
-                className={inputClass(!!error && !formData.fearedAnimal)}
+                error={!!error && !formData.fearedAnimal}
+                className="text-lg shadow-sm"
                 value={formData.fearedAnimal}
-                onChange={handleAnimalChange} // ใช้ฟังก์ชันห้ามตัวเลขเดิม
+                onChange={handleAnimalChange}
               />
             </div>
             <div></div>
@@ -156,12 +152,9 @@ export default function AssessmentPage() {
           )}
 
           <div className="mt-8 flex justify-center">
-            <button
-              onClick={handleNext}
-              className="bg-[#D9886A] hover:bg-[#c5765a] text-white text-xl font-bold py-3 px-16 rounded-full shadow-lg transition-transform hover:scale-105 active:scale-95"
-            >
+            <Button size="lg" pill onClick={handleNext}>
               เสร็จสิ้น
-            </button>
+            </Button>
           </div>
         </motion.div>
       </main>

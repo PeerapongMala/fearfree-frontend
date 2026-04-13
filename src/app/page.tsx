@@ -1,8 +1,8 @@
 "use client";
 
-import Navbar from "@/components/Navbar";
+import Navbar from "@/shared/components/Navbar";
 import Link from "next/link";
-import HeroIllustration from "@/components/HeroIllustration";
+import HeroIllustration from "@/shared/components/HeroIllustration";
 
 export default function Home() {
   return (

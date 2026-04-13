@@ -3,8 +3,8 @@
 import { useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { ArrowLeft, LogOut, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
-import { useAuthStore } from "@/stores/auth.store";
-import { useDoctorStore } from "@/stores/doctor.store";
+import { useAuthStore } from "@/features/auth";
+import { useDoctorStore } from "@/features/doctor";
 
 export default function DoctorRedemptionHistoryPage() {
   const router = useRouter();

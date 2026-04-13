@@ -2,15 +2,16 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { ArrowLeft, Star, Loader2 } from "lucide-react";
-import Navbar from "@/components/Navbar";
-import { useUserStore } from "@/stores/user.store";
+import Navbar from "@/shared/components/Navbar";
+import { useUserStore } from "@/features/user";
 import toast from "react-hot-toast";
-import { useRewardStore } from "@/stores/reward.store";
+import { useRewardStore } from "@/features/rewards";
+import { Button, ConfirmDialog, useConfirmDialog } from "@/shared/components/ui";
 
 export default function RewardsPage() {
   const router = useRouter();
+  const { dialog, showConfirm, closeDialog } = useConfirmDialog();
 
   // ใช้ profile เพื่อดูเหรียญของฉัน
   const { profile, fetchProfile } = useUserStore();
@@ -32,19 +33,29 @@ export default function RewardsPage() {
       return;
     }
 
-    if (window.confirm("ยืนยันการแลกรางวัลนี้?")) {
-      const success = await redeemReward(rewardId);
-      if (success) {
-        toast.success("แลกรางวัลสำเร็จ!");
-        // เหรียญจะถูกอัปเดตอัตโนมัติเพราะใน Store เราสั่ง fetchProfile() ไว้แล้ว
-      } else {
-        toast.error("เกิดข้อผิดพลาดในการแลกรางวัล");
-      }
-    }
+    showConfirm({
+      title: "ยืนยันการแลกรางวัล",
+      message: "ยืนยันการแลกรางวัลนี้?",
+      onConfirm: async () => {
+        const success = await redeemReward(rewardId);
+        if (success) {
+          toast.success("แลกรางวัลสำเร็จ!");
+        } else {
+          toast.error("เกิดข้อผิดพลาดในการแลกรางวัล");
+        }
+      },
+    });
   };
 
   return (
     <div className="min-h-screen bg-linear-to-b from-[#E6F4F1] to-[#CDE8E5] font-sans pb-10 flex flex-col">
+      <ConfirmDialog
+        isOpen={dialog.isOpen}
+        title={dialog.title}
+        message={dialog.message}
+        onConfirm={dialog.onConfirm}
+        onClose={closeDialog}
+      />
       <Navbar />
 
       <main className="flex-1 container mx-auto px-4 py-8 max-w-5xl flex flex-col items-center">
@@ -87,13 +98,17 @@ export default function RewardsPage() {
                   >
                     {/* Image */}
                     <div className="relative w-20 h-20 shrink-0 bg-white rounded-xl overflow-hidden border-2 border-white/20">
-                      <Image
-                        src={reward.image_url}
-                        alt={reward.name}
-                        fill
-                        className="object-cover"
-                        unoptimized
-                      />
+                      {reward.image_url && /^https:\/\//i.test(reward.image_url) ? (
+                        <img
+                          src={reward.image_url}
+                          alt={reward.name}
+                          className="absolute inset-0 w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400 text-xs">
+                          No Image
+                        </div>
+                      )}
                     </div>
 
                     {/* Description */}
@@ -108,12 +123,14 @@ export default function RewardsPage() {
                       <span className="text-sm md:text-base font-medium whitespace-nowrap">
                         {reward.cost_coins} คอยน์
                       </span>
-                      <button
+                      <Button
+                        size="sm"
+                        pill
                         onClick={() => handleRedeem(reward.id, reward.cost_coins)}
-                        className="bg-[#D9886A] hover:bg-[#c5765a] text-white px-6 py-2 rounded-full font-bold shadow-md transition-transform hover:scale-105 active:scale-95 whitespace-nowrap"
+                        className="whitespace-nowrap px-6"
                       >
                         แลก
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 ))

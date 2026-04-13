@@ -2,8 +2,8 @@
 
 import { useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
-import Navbar from "@/components/Navbar";
-import { useGameStore } from "@/stores/game.store";
+import Navbar from "@/shared/components/Navbar";
+import { useGameStore } from "@/features/game";
 import { motion } from "framer-motion";
 import { ArrowLeft, Loader2, Lock } from "lucide-react";
 

@@ -3,8 +3,8 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Loader2 } from "lucide-react";
-import Navbar from "@/components/Navbar";
-import { useUserStore } from "@/stores/user.store";
+import Navbar from "@/shared/components/Navbar";
+import { useUserStore } from "@/features/user";
 
 export default function MyPlayHistoryPage() {
   const router = useRouter();
