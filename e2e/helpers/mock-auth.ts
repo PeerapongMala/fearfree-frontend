@@ -28,9 +28,9 @@ function injectAuth(page: Page, role: "doctor" | "patient" | "admin") {
 /** Setup all API mocks */
 async function setupApiMocks(page: Page) {
   await page.route(`${API_URL}/auth/login`, (r) => r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ message: "OK", token: "test-token-123", refresh_token: "test-refresh-123", user: users.patient }) }));
-  await page.route(`${API_URL}/users/profile`, (r) => r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ data: users.patient }) }));
+  await page.route(`${API_URL}/users/me`, (r) => r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ data: users.patient }) }));
   await page.route(`${API_URL}/assessments/questions`, (r) => r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ data: [{ id: 1, prompt: "เมื่อเห็นสัตว์ที่กลัว คุณรู้สึกอย่างไร?" }, { id: 2, prompt: "คุณหลีกเลี่ยงสถานที่ที่มีสัตว์บ่อยแค่ไหน?" }, { id: 3, prompt: "ความกลัวส่งผลต่อชีวิตประจำวันมากแค่ไหน?" }] }) }));
-  await page.route(`${API_URL}/assessments/results`, (r) => r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ fear_level: "medium", percent: 50, description: "ปานกลาง" }) }));
+  await page.route(`${API_URL}/assessments/results`, (r) => r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ success: true, data: { fear_level: "medium", percent: 50, description: "ปานกลาง" } }) }));
   await page.route(`${API_URL}/games/categories`, (r) => r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ data: [{ id: 1, name: "Exposure Therapy" }] }) }));
   await page.route(`${API_URL}/games/categories/*/animals`, (r) => r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ data: [{ id: 1, name: "งู", category_id: 1 }, { id: 2, name: "แมงมุม", category_id: 1 }] }) }));
   await page.route(`${API_URL}/games/animals/*/stages`, (r) => r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ data: [{ id: 1, stage_no: 1, is_locked: false, is_completed: false }, { id: 2, stage_no: 2, is_locked: true, is_completed: false }] }) }));
