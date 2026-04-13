@@ -39,12 +39,8 @@ export default function DoctorDashboard() {
 
   useEffect(() => {
     if (!mounted) return;
-    if (!user || user.role !== "doctor") {
-      router.push("/login");
-      return;
-    }
     fetchPatients();
-  }, [mounted, user, fetchPatients, router]);
+  }, [mounted, fetchPatients]);
 
   if (!mounted) return null;
 

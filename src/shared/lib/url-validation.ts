@@ -26,8 +26,7 @@ export function validateMediaUrl(url: string): { valid: boolean; type: "image" |
     if (ALLOWED_IMAGE_HOSTS.some((d) => host === d || host.endsWith(`.${d}`))) {
       return { valid: true, type: "image" };
     }
-    // Allow any https URL as image by default (backend should also validate)
-    return { valid: true, type: "image" };
+    return { valid: false, type: null };
   } catch {
     return { valid: false, type: null };
   }

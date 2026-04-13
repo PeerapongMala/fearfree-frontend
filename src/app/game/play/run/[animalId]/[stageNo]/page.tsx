@@ -262,6 +262,7 @@ function GameRunner({
               </label>
               <textarea
                 value={symptomNote}
+                maxLength={500}
                 onChange={(e) => {
                   setSymptomNote(e.target.value);
                   setNoteError(false);
