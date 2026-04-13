@@ -13,11 +13,12 @@ import {
 // 1. Import Store
 import { useAuthStore, authService } from "@/features/auth";
 import { Button, Input } from "@/shared/components/ui";
+import { useLoginThrottle } from "@/shared/hooks/useLoginThrottle";
 
 export default function LoginPage() {
   const router = useRouter();
-  // 2. ดึงฟังก์ชัน login จาก Store
   const { login } = useAuthStore();
+  const { isLocked, remainingSeconds, recordFailure, reset } = useLoginThrottle();
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -30,6 +31,11 @@ export default function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (isLocked) {
+      setError(`กรุณารอ ${remainingSeconds} วินาทีก่อนลองใหม่`);
+      return;
+    }
 
     // --- Validation ---
     if (!formData.username.trim() || !formData.password) {
@@ -65,6 +71,7 @@ export default function LoginPage() {
       setError(
         error.response?.data?.error || "เข้าสู่ระบบไม่สำเร็จ โปรดลองอีกครั้ง"
       );
+      recordFailure();
     }
   };
 

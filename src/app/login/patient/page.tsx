@@ -11,10 +11,12 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { useAuthStore, authService } from "@/features/auth";
+import { useLoginThrottle } from "@/shared/hooks/useLoginThrottle";
 
 export default function PatientLoginPage() {
   const router = useRouter();
   const { login } = useAuthStore();
+  const { isLocked, remainingSeconds, recordFailure } = useLoginThrottle();
 
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
@@ -36,6 +38,11 @@ export default function PatientLoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (isLocked) {
+      setError(`กรุณารอ ${remainingSeconds} วินาทีก่อนลองใหม่`);
+      return;
+    }
 
     if (!code) {
       setError("กรุณากรอกรหัสผู้ป่วย");
@@ -61,6 +68,7 @@ export default function PatientLoginPage() {
       setError(
         error.response?.data?.error || "รหัสไม่ถูกต้อง หรือไม่พบผู้ป่วยในระบบ"
       );
+      recordFailure();
     }
   };
 
