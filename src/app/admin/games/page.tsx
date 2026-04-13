@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { Plus, Trash2, Folder, LayoutGrid, Layers, ChevronDown, ChevronRight, CheckCircle } from "lucide-react";
 import { useAdminStore } from "@/features/admin";
 import { Button, Card, Input, ConfirmDialog, useConfirmDialog } from "@/shared/components/ui";
+import { validateMediaUrl } from "@/shared/lib/url-validation";
+import toast from "react-hot-toast";
 
 export default function AdminGamesPage() {
   const {
@@ -73,10 +75,15 @@ export default function AdminGamesPage() {
     } else if (formMode.type === "stage") {
       const { stageNo, rewardCoins, mediaUrl } = stageForm;
       if (stageNo && rewardCoins && mediaUrl) {
+        const validation = validateMediaUrl(mediaUrl);
+        if (!validation.valid) {
+          toast.error("URL ไม่ถูกต้อง ต้องเป็น https://");
+          return;
+        }
         createStage({
           animal_id: formMode.animId,
           stage_no: Number(stageNo),
-          media_type: mediaUrl.includes("youtube") ? "video" : "image",
+          media_type: validation.type ?? "image",
           media_url: mediaUrl,
           display_time_sec: 10,
           reward_coins: Number(rewardCoins),

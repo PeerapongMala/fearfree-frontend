@@ -31,10 +31,11 @@ export const useRewardStore = create<RewardState>((set, get) => ({
   },
 
   redeemReward: async (rewardId: number) => {
+    if (get().isLoading) return false;
+    set({ isLoading: true });
     try {
       const res = await rewardService.redeemReward(rewardId);
       if (res.success) {
-        // ✅ ถ้าแลกสำเร็จ ให้ไปอัปเดตเหรียญใน User Store ทันที
         useUserStore.getState().fetchProfile();
         return true;
       }
@@ -43,6 +44,8 @@ export const useRewardStore = create<RewardState>((set, get) => ({
       logger.error("Redeem failed", error);
       toast.error("แลกรางวัลล้มเหลว กรุณาลองใหม่อีกครั้ง");
       return false;
+    } finally {
+      set({ isLoading: false });
     }
   },
 }));

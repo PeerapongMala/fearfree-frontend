@@ -8,6 +8,7 @@ import { useUserStore } from "@/features/user";
 import toast from "react-hot-toast";
 import { useRewardStore } from "@/features/rewards";
 import { Button, ConfirmDialog, useConfirmDialog } from "@/shared/components/ui";
+import { isSafeImageUrl } from "@/shared/lib/url-validation";
 
 export default function RewardsPage() {
   const router = useRouter();
@@ -98,7 +99,7 @@ export default function RewardsPage() {
                   >
                     {/* Image */}
                     <div className="relative w-20 h-20 shrink-0 bg-white rounded-xl overflow-hidden border-2 border-white/20">
-                      {reward.image_url && /^https:\/\//i.test(reward.image_url) ? (
+                      {reward.image_url && isSafeImageUrl(reward.image_url) ? (
                         <img
                           src={reward.image_url}
                           alt={reward.name}

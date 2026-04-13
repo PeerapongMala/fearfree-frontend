@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Users, Package, Gamepad2, TrendingUp } from "lucide-react";
 import { adminService } from "@/features/admin";
+import { logger } from "@/shared/lib/logger";
 import Link from "next/link";
 import { Card } from "@/shared/components/ui";
 
@@ -23,7 +24,7 @@ export default function AdminDashboardPage() {
           activeRewards: rewards.filter((r) => r.stock > 0).length,
         });
       } catch (err) {
-        console.error(err);
+        logger.error("Failed to fetch admin stats", err);
       }
     };
     fetchStats();

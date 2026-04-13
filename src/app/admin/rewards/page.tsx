@@ -5,6 +5,7 @@ import { Plus, Edit, Trash2, CheckCircle, Package } from "lucide-react";
 import { useAdminStore } from "@/features/admin";
 import type { AdminReward, AdminRewardInput } from "@/features/admin";
 import { Button, Input, Textarea, Card, ConfirmDialog, useConfirmDialog } from "@/shared/components/ui";
+import { isSafeImageUrl } from "@/shared/lib/url-validation";
 
 export default function AdminRewardsPage() {
   const { rewards, isFetching, isSubmitting, fetchRewards, createReward, updateReward, deleteReward } =
@@ -122,7 +123,7 @@ export default function AdminRewardsPage() {
                     className="hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0"
                   >
                     <td className="p-4">
-                      {reward.image_url && /^https:\/\//i.test(reward.image_url) ? (
+                      {reward.image_url && isSafeImageUrl(reward.image_url) ? (
                         <img
                           src={reward.image_url}
                           alt={reward.name}
