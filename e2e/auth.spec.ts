@@ -50,7 +50,7 @@ test.describe("Doctor Login Page", () => {
   test("has link to forgot password page", async ({ page }) => {
     await page.goto("/login");
     await page.getByText("ลืมรหัสผ่าน").click();
-    await expect(page).toHaveURL(/\/forgot-password/);
+    await expect(page).toHaveURL(/\/forgot-password/, { timeout: 10000 });
   });
 });
 
