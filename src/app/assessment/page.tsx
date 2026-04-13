@@ -1,24 +1,42 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/shared/components/Navbar";
 import { AssessmentStepper } from "@/features/assessment";
 import { userService } from "@/features/user";
 import { useAuthStore } from "@/features/auth";
+import { useUserStore } from "@/features/user";
 import { motion } from "framer-motion";
-import { ArrowLeft, AlertCircle } from "lucide-react";
+import { ArrowLeft, AlertCircle, Loader2 } from "lucide-react";
 import { Button, Input } from "@/shared/components/ui";
 
 export default function AssessmentPage() {
   const router = useRouter();
   const { user } = useAuthStore();
+  const { profile, fetchProfile } = useUserStore();
   const [error, setError] = useState("");
+  const [checking, setChecking] = useState(true);
 
   const [formData, setFormData] = useState({
     age: "",
     fearedAnimal: "",
   });
+
+  // เช็คว่ากรอกข้อมูลไปแล้วหรือยัง ถ้ามีแล้ว ข้ามไปหน้าคำถามเลย
+  useEffect(() => {
+    fetchProfile().then(() => {
+      const p = useUserStore.getState().profile;
+      if (p && p.age && p.most_fear_animal) {
+        router.replace("/assessment/questions");
+      } else {
+        // Pre-fill ถ้ามีข้อมูลบางส่วน
+        if (p?.age) setFormData((prev) => ({ ...prev, age: String(p.age) }));
+        if (p?.most_fear_animal) setFormData((prev) => ({ ...prev, fearedAnimal: p.most_fear_animal || "" }));
+        setChecking(false);
+      }
+    });
+  }, [fetchProfile, router]);
 
   // --- 1. ดัก Input อายุ (ตัวเลขเท่านั้น) ---
   const handleAgeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,6 +99,14 @@ export default function AssessmentPage() {
     }
   };
 
+
+  if (checking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-b from-teal-50 to-teal-100">
+        <Loader2 className="animate-spin text-[#0D3B66]" size={48} />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-linear-to-b from-teal-50 to-teal-100">
